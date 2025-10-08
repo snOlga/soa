@@ -16,6 +16,7 @@
 
     <modules>
         <module>teams-service</module>
+        <module>humans-service</module>
         <module>model</module>
     </modules>
 

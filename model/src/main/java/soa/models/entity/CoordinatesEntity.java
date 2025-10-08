@@ -1,11 +1,17 @@
 package soa.models.entity;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "coordinates")
 @Where(clause = "is_deleted = false")
@@ -25,4 +31,9 @@ public class CoordinatesEntity {
     @Min(value = -636)
     @Column(name = "y", nullable = false)
     private Long y;
+
+    @NotNull
+    @Column(name = "is_deleted")
+    @ColumnDefault("false")
+    private Boolean isDeleted;
 }

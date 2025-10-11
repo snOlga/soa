@@ -56,7 +56,7 @@ public class HumanEntity {
     @Column(name = "impact_speed", nullable = false)
     private Float impactSpeed;
 
-    @NotNull
+    @Null
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type")
     private WeaponType weaponType;
@@ -65,6 +65,11 @@ public class HumanEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "mood")
     private Mood mood;
+
+    @Null
+    @OneToOne
+    @JoinColumn(name = "car_id", nullable = true)
+    private CarEntity car;
 
     @NotNull
     @Column(name = "is_deleted")

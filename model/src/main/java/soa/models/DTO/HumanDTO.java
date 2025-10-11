@@ -41,13 +41,14 @@ public class HumanDTO {
     @Max(value = 300)
     private Float impactSpeed;
 
-    @NotNull
+    @Null
     private WeaponType weaponType;
 
     @NotNull
     private Mood mood;
 
-    @NotNull
-    @ColumnDefault("false")
-    private Boolean isDeleted;
+    @Null
+    private CarDTO car;
+
+    private Boolean isDeleted = false;
 }

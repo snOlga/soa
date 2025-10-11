@@ -1,7 +1,5 @@
 package soa.models.DTO;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -21,7 +19,5 @@ public class CoordinatesDTO {
     @Min(value = -636)
     private Long y;
 
-    @NotNull
-    @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

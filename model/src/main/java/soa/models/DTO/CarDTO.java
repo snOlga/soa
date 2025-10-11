@@ -1,5 +1,4 @@
 package soa.models.DTO;
-import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -20,8 +19,5 @@ public class CarDTO {
     @Min(value = 0)
     private Long coolness;
 
-    
-    @NotNull
-    @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

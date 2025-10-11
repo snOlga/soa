@@ -4,6 +4,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
 
 import humans.service.resourse.HumanResouce;
+import humans.service.service.HumanService;
 import jakarta.ws.rs.ApplicationPath;
 
 @Component
@@ -12,5 +13,6 @@ public class JerseyConfig extends ResourceConfig {
 
     public JerseyConfig() {
         register(HumanResouce.class);
+        register(HumanService.class);
     }
 }

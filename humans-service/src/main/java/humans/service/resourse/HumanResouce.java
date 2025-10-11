@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Component;
 
+import humans.service.service.HumanService;
+import jakarta.inject.Inject;
 import jakarta.websocket.server.PathParam;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -14,11 +16,14 @@ import soa.models.enums.WeaponType;
 @Path("/humans")
 public class HumanResouce {
 
+    @Inject
+    HumanService humanService;
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(HumanDTO dto) {
-        return Response.ok().entity(dto).build();
+        return Response.ok().entity(humanService.save(dto)).build();
     }
 
     @GET

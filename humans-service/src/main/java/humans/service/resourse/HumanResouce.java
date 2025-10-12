@@ -2,10 +2,10 @@ package humans.service.resourse;
 
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import humans.service.service.HumanService;
-import jakarta.inject.Inject;
 import jakarta.websocket.server.PathParam;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
@@ -16,7 +16,7 @@ import soa.models.enums.WeaponType;
 @Path("/humans")
 public class HumanResouce {
 
-    @Inject
+    @Autowired
     HumanService humanService;
 
     @POST

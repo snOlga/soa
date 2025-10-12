@@ -1,17 +1,40 @@
 package soa.models.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.springframework.stereotype.Component;
 
 import soa.models.DTO.CarDTO;
 import soa.models.entity.CarEntity;
 
-@Service
-@Mapper(componentModel = "spring")
-public interface CarMapper {
-    CarDTO toDTO(CarEntity entity);
+@Component
+public class CarMapper {
 
-    @Mapping(ignore = true, target = "isDeleted")
-    CarEntity toEntity(CarDTO dto);
+    private final ModelMapper mapper;
+
+    public CarMapper() {
+        this.mapper = new ModelMapper();
+        configureMappings();
+    }
+
+    private void configureMappings() {
+        TypeMap<CarEntity, CarDTO> toDtoTypeMap = mapper.createTypeMap(CarEntity.class, CarDTO.class);
+        toDtoTypeMap.addMappings(m -> {
+            m.skip(CarDTO::setIsDeleted);
+        });
+
+        TypeMap<CarDTO, CarEntity> toEntityTypeMap = mapper.createTypeMap(CarDTO.class, CarEntity.class);
+        toEntityTypeMap.addMappings(m -> {
+            m.skip(CarEntity::setId);
+            m.skip(CarEntity::setIsDeleted);
+        });
+    }
+
+    public CarDTO toDTO(CarEntity entity) {
+        return mapper.map(entity, CarDTO.class);
+    }
+
+    public CarEntity toEntity(CarDTO dto) {
+        return mapper.map(dto, CarEntity.class);
+    }
 }

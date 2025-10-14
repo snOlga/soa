@@ -32,8 +32,8 @@ public class CoordinatesEntity {
     @Column(name = "y", nullable = false)
     private Long y;
 
-    @NotNull
+    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

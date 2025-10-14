@@ -11,11 +11,11 @@ import soa.models.enums.WeaponType;
 @Repository
 public interface HumanRepository extends JpaRepository<HumanEntity, Long> {
 
-    @Query("update HumanEntity h set h.isDeleted = 'true' where h.weaponType = ?1")
+    @Query("update HumanEntity h set h.isDeleted = true where h.weaponType = ?1")
     public void deleteAllByWeaponType(WeaponType weaponType);
 
     public HumanEntity findByWeaponType(WeaponType weaponType);
 
-    @Query("update HumanEntity h set h.isDeleted = 'true' where h.car.coolness <= ?1")
+    @Query("update HumanEntity h set h.isDeleted = true where h.car.coolness < ?1")
     public void deleteAllByLessCoolCar(Integer lessCoolness);
 }

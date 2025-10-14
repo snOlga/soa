@@ -31,8 +31,8 @@ public class CarEntity {
     @Column(name = "coolness", nullable = false)
     private Long coolness;
 
-    @NotNull
+    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

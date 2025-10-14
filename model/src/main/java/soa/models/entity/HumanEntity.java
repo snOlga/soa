@@ -32,7 +32,7 @@ public class HumanEntity {
     private String name;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "coordinates_id", nullable = false)
     private CoordinatesEntity coordinates;
 
@@ -43,7 +43,7 @@ public class HumanEntity {
     @NotNull
     @Column(name = "is_real_hero")
     @ColumnDefault("true")
-    private Boolean isRealHero;
+    private Boolean isRealHero = true;
 
     @NotBlank
     @NotNull
@@ -67,12 +67,12 @@ public class HumanEntity {
     private Mood mood;
 
     @Null
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "car_id", nullable = true)
     private CarEntity car;
 
-    @NotNull
+    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

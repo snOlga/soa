@@ -28,12 +28,12 @@ public class HumanEntity {
 
     @NotBlank
     @NotNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "coordinates_id", nullable = false)
+    @JoinColumn(name = "coordinates_id")
     private CoordinatesEntity coordinates;
 
     @CreationTimestamp
@@ -47,16 +47,16 @@ public class HumanEntity {
 
     @NotBlank
     @NotNull
-    @Column(name = "soundtrack", nullable = false)
+    @Column(name = "soundtrack")
     private String soundtrackName;
 
     @NotNull
     @Min(value = 0)
     @Max(value = 300)
-    @Column(name = "impact_speed", nullable = false)
+    @Column(name = "impact_speed")
     private Float impactSpeed;
 
-    @Null
+    // @Null
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type")
     private WeaponType weaponType;
@@ -66,9 +66,9 @@ public class HumanEntity {
     @Column(name = "mood")
     private Mood mood;
 
-    @Null
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "car_id", nullable = true)
+    // @Null
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "car_id")
     private CarEntity car;
 
     @Column(name = "is_deleted")

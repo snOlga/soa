@@ -23,13 +23,13 @@ public class CarEntity {
 
     @NotBlank
     @NotNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @NotNull
     @Min(value = 0)
     @Max(value = 100)
-    @Column(name = "coolness", nullable = false)
+    @Column(name = "coolness")
     private Long coolness;
 
     @Column(name = "is_deleted")

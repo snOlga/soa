@@ -24,13 +24,13 @@ public class CoordinatesEntity {
     @NotNull
     @Min(value = -636)
     @Max(value = 636)
-    @Column(name = "x", nullable = false)
+    @Column(name = "x")
     private Long x;
 
     @NotNull
     @Min(value = -636)
     @Max(value = 636)
-    @Column(name = "y", nullable = false)
+    @Column(name = "y")
     private Long y;
 
     @Column(name = "is_deleted")

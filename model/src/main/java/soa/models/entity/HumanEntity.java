@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import soa.models.enums.Mood;
 import soa.models.enums.WeaponType;
+import soa.models.exception.FilterParsingException;
 import lombok.*;
 
 @Setter

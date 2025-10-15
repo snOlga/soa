@@ -19,5 +19,5 @@ public class CoordinatesDTO {
     @Min(value = -636)
     private Long y;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 }

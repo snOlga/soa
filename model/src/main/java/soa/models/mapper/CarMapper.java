@@ -18,10 +18,7 @@ public class CarMapper {
     }
 
     private void configureMappings() {
-        TypeMap<CarEntity, CarDTO> toDtoTypeMap = mapper.createTypeMap(CarEntity.class, CarDTO.class);
-        toDtoTypeMap.addMappings(m -> {
-            m.skip(CarDTO::setIsDeleted);
-        });
+        mapper.createTypeMap(CarEntity.class, CarDTO.class);
 
         TypeMap<CarDTO, CarEntity> toEntityTypeMap = mapper.createTypeMap(CarDTO.class, CarEntity.class);
         toEntityTypeMap.addMappings(m -> {

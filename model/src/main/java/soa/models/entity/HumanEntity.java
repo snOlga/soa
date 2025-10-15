@@ -71,7 +71,6 @@ public class HumanEntity {
     @JoinColumn(name = "car_id", nullable = true)
     private CarEntity car;
 
-    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted = false;

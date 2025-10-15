@@ -36,5 +36,5 @@ public class TeamEntity {
     @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }

@@ -2,9 +2,6 @@ package soa.models.DTO;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-
 import jakarta.validation.constraints.*;
 import lombok.*;
 import soa.models.enums.Mood;
@@ -25,11 +22,9 @@ public class HumanDTO {
     @NotNull
     private CoordinatesDTO coordinates;
 
-    @CreationTimestamp
     private LocalDateTime creationDate;
 
     @NotNull
-    @ColumnDefault("true")
     private Boolean isRealHero;
 
     @NotBlank
@@ -41,14 +36,12 @@ public class HumanDTO {
     @Max(value = 300)
     private Float impactSpeed;
 
-    @Null
     private WeaponType weaponType;
 
     @NotNull
     private Mood mood;
 
-    @Null
     private CarDTO car;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 }

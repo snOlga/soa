@@ -19,5 +19,5 @@ public class CarDTO {
     @Min(value = 0)
     private Long coolness;
 
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 }

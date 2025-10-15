@@ -15,7 +15,7 @@ import lombok.*;
 @Table(name = "cars")
 @Where(clause = "is_deleted = false")
 public class CarEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,10 +28,10 @@ public class CarEntity {
 
     @NotNull
     @Min(value = 0)
+    @Max(value = 100)
     @Column(name = "coolness", nullable = false)
     private Long coolness;
 
-    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted = false;

@@ -4,8 +4,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Setter
@@ -16,7 +15,7 @@ import lombok.*;
 @Table(name = "coordinates")
 @Where(clause = "is_deleted = false")
 public class CoordinatesEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -24,15 +23,16 @@ public class CoordinatesEntity {
 
     @NotNull
     @Min(value = -636)
+    @Max(value = 636)
     @Column(name = "x", nullable = false)
     private Long x;
 
     @NotNull
     @Min(value = -636)
+    @Max(value = 636)
     @Column(name = "y", nullable = false)
     private Long y;
 
-    // @NotNull
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted = false;

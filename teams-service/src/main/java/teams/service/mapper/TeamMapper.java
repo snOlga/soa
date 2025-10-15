@@ -18,10 +18,7 @@ public class TeamMapper {
     }
 
     private void configureMappings() {
-        TypeMap<TeamEntity, TeamDTO> toDtoTypeMap = mapper.createTypeMap(TeamEntity.class, TeamDTO.class);
-        toDtoTypeMap.addMappings(m -> {
-            m.skip(TeamDTO::setIsDeleted);
-        });
+        mapper.createTypeMap(TeamEntity.class, TeamDTO.class);
 
         TypeMap<TeamDTO, TeamEntity> toEntityTypeMap = mapper.createTypeMap(TeamDTO.class, TeamEntity.class);
         toEntityTypeMap.addMappings(m -> {

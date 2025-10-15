@@ -4,23 +4,24 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import soa.models.DTO.CoordinatesDTO;
 import soa.models.entity.CoordinatesEntity;
 
 @Component
 public class CoordinatesMapper {
 
-    private final ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper;
 
-    @PostConstruct
+    public CoordinatesMapper() {
+        this.mapper = new ModelMapper();
+        configureMappings();
+    }
+
     private void configureMappings() {
-        TypeMap<CoordinatesEntity, CoordinatesDTO> toDtoTypeMap = mapper.createTypeMap(CoordinatesEntity.class, CoordinatesDTO.class);
-        toDtoTypeMap.addMappings(m -> {
-            m.skip(CoordinatesDTO::setIsDeleted);
-        });
+        mapper.createTypeMap(CoordinatesEntity.class, CoordinatesDTO.class);
 
-        TypeMap<CoordinatesDTO, CoordinatesEntity> toEntityTypeMap = mapper.createTypeMap(CoordinatesDTO.class, CoordinatesEntity.class);
+        TypeMap<CoordinatesDTO, CoordinatesEntity> toEntityTypeMap = mapper.createTypeMap(CoordinatesDTO.class,
+                CoordinatesEntity.class);
         toEntityTypeMap.addMappings(m -> {
             m.skip(CoordinatesEntity::setId);
             m.skip(CoordinatesEntity::setIsDeleted);

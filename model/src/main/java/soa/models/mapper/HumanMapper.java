@@ -5,7 +5,6 @@ import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 
@@ -16,14 +15,15 @@ public class HumanMapper {
     private CarMapper carMapper;
     @Autowired
     private CoordinatesMapper coordinatesMapper;
-    private final ModelMapper mapper = new ModelMapper();;
+    private final ModelMapper mapper;
 
-    @PostConstruct
+    public HumanMapper() {
+        this.mapper = new ModelMapper();
+        configureMappings();
+    }
+
     private void configureMappings() {
-        TypeMap<HumanEntity, HumanDTO> toDtoTypeMap = mapper.createTypeMap(HumanEntity.class, HumanDTO.class);
-        toDtoTypeMap.addMappings(m -> {
-            m.skip(HumanDTO::setIsDeleted);
-        });
+        mapper.createTypeMap(HumanEntity.class, HumanDTO.class);
 
         TypeMap<HumanDTO, HumanEntity> toEntityTypeMap = mapper.createTypeMap(HumanDTO.class, HumanEntity.class);
         toEntityTypeMap.addMappings(m -> {
@@ -35,14 +35,16 @@ public class HumanMapper {
 
     public HumanDTO toDTO(HumanEntity entity) {
         HumanDTO dto = mapper.map(entity, HumanDTO.class);
-        dto.setCar(carMapper.toDTO(entity.getCar()));
+        if (entity.getCar() != null)
+            dto.setCar(carMapper.toDTO(entity.getCar()));
         dto.setCoordinates(coordinatesMapper.toDTO(entity.getCoordinates()));
         return dto;
     }
 
     public HumanEntity toEntity(HumanDTO dto) {
         HumanEntity entity = mapper.map(dto, HumanEntity.class);
-        entity.setCar(carMapper.toEntity(dto.getCar()));
+        if (dto.getCar() != null)
+            entity.setCar(carMapper.toEntity(dto.getCar()));
         entity.setCoordinates(coordinatesMapper.toEntity(dto.getCoordinates()));
         return entity;
     }

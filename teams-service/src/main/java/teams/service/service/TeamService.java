@@ -66,7 +66,7 @@ public class TeamService {
     private void checkTeamAndHuman(Long teamId, Long humanId) {
         if (!repo.existsById(teamId))
             throw new TeamNotFoundException();
-        if (humanRepository.existsById(humanId))
+        if (!humanRepository.existsById(humanId))
             throw new HumanNotFoundException();
     }
 }

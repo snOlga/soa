@@ -14,7 +14,7 @@ import lombok.*;
 @Entity
 @Table(name = "coordinates")
 @Where(clause = "is_deleted = false")
-public class CoordinatesEntity {
+public class CoordinatesEntity implements Comparable<CoordinatesEntity> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +36,16 @@ public class CoordinatesEntity {
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted = false;
+
+    @Override
+    public boolean equals(Object obj) {
+        CoordinatesEntity second = (CoordinatesEntity) obj;
+        return this.x.equals(second.getX()) && this.y.equals(second.getY());
+    }
+
+    @Override
+    public int compareTo(CoordinatesEntity o) {
+        return this.x.compareTo(o.getX());
+    }
+
 }

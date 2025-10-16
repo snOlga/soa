@@ -14,7 +14,7 @@ import lombok.*;
 @Entity
 @Table(name = "cars")
 @Where(clause = "is_deleted = false")
-public class CarEntity {
+public class CarEntity implements Comparable<CarEntity>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +35,15 @@ public class CarEntity {
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted = false;
+
+    @Override
+    public boolean equals(Object obj) {
+        CarEntity second = (CarEntity) obj;
+        return this.name.equals(second.getName()) && this.coolness.equals(second.getCoolness());
+    }
+
+    @Override
+    public int compareTo(CarEntity o) {
+        return this.coolness.compareTo(o.getCoolness());
+    }
 }

@@ -1,11 +1,10 @@
 package humans.service.service;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 import soa.models.enums.WeaponType;
-import soa.models.exception.FilterParsingException;
 import soa.models.exception.HumanNotFoundException;
 import soa.models.mapper.HumanMapper;
 import soa.models.repository.HumanRepository;
@@ -40,61 +38,66 @@ public class HumanService {
     public List<HumanDTO> getSome(Integer from, Integer pageSize, String filter, String sortBy)
             throws NoSuchFieldException, SecurityException {
         Sort sortQuery = getSortQuery(sortBy);
-        return repo.findAll(PageRequest.of(from, (from + pageSize), sortQuery)).map(mapper::toDTO).filter(null)
-                .toList();
+        return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, (from + pageSize), sortQuery))
+                .map(mapper::toDTO).toList();
     }
 
     private Sort getSortQuery(String sortLine) throws NoSuchFieldException, SecurityException {
+        if (sortLine.isBlank() || sortLine.isEmpty())
+            return Sort.by("id");
         String[] fieldsSorting = sortLine.split(";");
-        Sort sorting = Sort.by("id");
-        for (String fieldStr : fieldsSorting) {
-            if (HumanEntity.class.getField(fieldStr) != null)
-                sorting = sorting.and(Sort.by(fieldStr));
+        return Sort.by(fieldsSorting);
+    }
+
+    private Specification<HumanEntity> buildQueryFilter(String filter) {
+        if (filter.isBlank() || filter.isEmpty())
+            return Specification.unrestricted();
+        Matcher matcher = CONDITION_PATTERN.matcher(filter);
+        Specification<HumanEntity> spec = Specification.unrestricted();
+        while (matcher.find()) {
+            spec = spec.and(buildSpecQueryFromOneFilter(matcher));
         }
-        return sorting;
+        return spec;
     }
 
     private static final Pattern CONDITION_PATTERN = Pattern.compile("(\\w+)([<>!=]=?|==)([^;]+)");
 
-    @SuppressWarnings("unchecked")
-    public static Specification<HumanEntity> buildSpecQueryFromOneFilter(String filter) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Specification<HumanEntity> buildSpecQueryFromOneFilter(Matcher matcher) {
         return (root, query, builder) -> {
-            Matcher matcher = CONDITION_PATTERN.matcher(filter);
-            while (matcher.find()) {
-                String field = matcher.group(1);
-                String operator = matcher.group(2);
-                String value = matcher.group(3).replaceAll("'", "").trim();
 
-                Object typedValue = convertValue(value);
+            String field = matcher.group(1);
+            String operator = matcher.group(2);
+            String value = matcher.group(3).replaceAll("'", "").trim();
 
-                switch (operator) {
-                    case "=":
-                    case "==":
-                        return builder.equal(root.get(field), typedValue);
-                    case "!=":
-                        return builder.notEqual(root.get(field), typedValue);
-                    case ">":
-                        return builder.greaterThan(root.get(field), (Comparable) typedValue);
-                    case ">=":
-                        return builder.greaterThanOrEqualTo(root.get(field), (Comparable) typedValue);
-                    case "<":
-                        return builder.lessThan(root.get(field), (Comparable) typedValue);
-                    case "<=":
-                        return builder.lessThanOrEqualTo(root.get(field), (Comparable) typedValue);
-                    default:
-                        throw new IllegalArgumentException("Unsupported operator: " + operator);
-                }
+            Object typedValue = convertValue(value);
+
+            switch (operator) {
+                case "=", "==":
+                    return builder.equal(root.get(field), typedValue);
+                case "!=":
+                    return builder.notEqual(root.get(field), typedValue);
+                case ">":
+                    return builder.greaterThan(root.get(field), (Comparable) typedValue);
+                case ">=":
+                    return builder.greaterThanOrEqualTo(root.get(field), (Comparable) typedValue);
+                case "<":
+                    return builder.lessThan(root.get(field), (Comparable) typedValue);
+                case "<=":
+                    return builder.lessThanOrEqualTo(root.get(field), (Comparable) typedValue);
+                default:
+                    throw new IllegalArgumentException("Unsupported operator: " + operator);
             }
-            return null;
         };
+
     }
 
-    private static Object convertValue(String value) {
+    private Object convertValue(String value) {
         try {
             return Integer.valueOf(value);
         } catch (Exception e) {
             try {
-                return Boolean.valueOf(value);
+                return parseBoolean(value);
             } catch (Exception e2) {
                 try {
                     Double.valueOf(value);
@@ -104,6 +107,17 @@ public class HumanService {
             }
         }
         return value;
+    }
+
+    private Boolean parseBoolean(String value) throws ParseException {
+        switch (value.toLowerCase()) {
+            case "t", "true":
+                return true;
+            case "f", "false":
+                return false;
+            default:
+                throw new ParseException("Cannot parse Boolean from string: " + value);
+        }
     }
 
     public HumanDTO update(Long id, HumanDTO dto) {

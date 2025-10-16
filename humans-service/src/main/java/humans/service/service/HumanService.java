@@ -1,5 +1,6 @@
 package humans.service.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,8 +39,12 @@ public class HumanService {
     public List<HumanDTO> getSome(Integer from, Integer pageSize, String filter, String sortBy)
             throws NoSuchFieldException, SecurityException {
         Sort sortQuery = getSortQuery(sortBy);
-        return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, (from + pageSize), sortQuery))
-                .map(mapper::toDTO).toList();
+        try {
+            return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, (from + pageSize), sortQuery))
+                    .map(mapper::toDTO).toList();
+        } catch (org.springframework.dao.InvalidDataAccessApiUsageException e) {
+            return new ArrayList<>();
+        }
     }
 
     private Sort getSortQuery(String sortLine) throws NoSuchFieldException, SecurityException {
@@ -53,7 +58,7 @@ public class HumanService {
         if (filter.isBlank() || filter.isEmpty())
             return Specification.unrestricted();
         Matcher matcher = CONDITION_PATTERN.matcher(filter);
-        Specification<HumanEntity> spec = Specification.unrestricted();
+        Specification<HumanEntity> spec = Specification.not(null);
         while (matcher.find()) {
             spec = spec.and(buildSpecQueryFromOneFilter(matcher));
         }
@@ -64,14 +69,11 @@ public class HumanService {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Specification<HumanEntity> buildSpecQueryFromOneFilter(Matcher matcher) {
+        String field = matcher.group(1);
+        String operator = matcher.group(2);
+        String value = matcher.group(3).replaceAll("'", "").trim();
+        Object typedValue = convertValue(value);
         return (root, query, builder) -> {
-
-            String field = matcher.group(1);
-            String operator = matcher.group(2);
-            String value = matcher.group(3).replaceAll("'", "").trim();
-
-            Object typedValue = convertValue(value);
-
             switch (operator) {
                 case "=", "==":
                     return builder.equal(root.get(field), typedValue);

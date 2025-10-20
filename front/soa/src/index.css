@@ -1,0 +1,9 @@
+.container {
+   font-family: Arial, sans-serif;
+   display: flex;
+}
+
+
+.main-container {
+   padding-left: 50px;
+}

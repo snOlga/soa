@@ -1,50 +1,39 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import "./App.css";
 
-
-var demo = [
-    {
-        id: 1,
-        name: "string",
-        humans: [1, 2, 3]
-    },
-    {
-        id: 1,
-        name: "string",
-        humans: [1, 2, 3]
-    },
-    {
-        id: 1,
-        name: "string",
-        humans: [1, 2, 3]
-    },
-    {
-        id: 1,
-        name: "string",
-        humans: [1, 2, 3]
-    },
-    {
-        id: 1,
-        name: "string",
-        humans: [1, 2, 3]
-    }
-]
-
-
 function TableTeam() {
+    const [teams, setTeams] = useState([])
     const [editingTeam, setTeam] = useState({
         id: -1,
         name: "",
         humans: []
     });
+    const [searchId, setSearchId] = useState({
+        id: 0
+    })
 
     const remove = (teamId) => {
-        setTeam({ ...editingTeam, id: -1 })
+        fetch("https://localhost:18018/teams/" + teamId, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        })
     }
 
     const update = (teamId) => {
+        fetch("https://localhost:18018/teams/" + editingTeam.id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editingTeam),
+        })
         setTeam({ ...editingTeam, id: -1 })
+    }
+
+    const find = () => {
+        fetch("https://localhost:18018/teams/" + searchId, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([...teams, res]) : null)
     }
 
     const handleChange = (e) => {
@@ -66,17 +55,6 @@ function TableTeam() {
         }
         console.log(editingTeam)
     };
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await fetch("http://localhost:8080/api/humans", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(editingTeam),
-        });
-    };
-
 
     const removeHuman = (humanId) => {
         setTeam((prev) => ({
@@ -101,7 +79,7 @@ function TableTeam() {
             )
         })
 
-    const displayData = demo.map(
+    const displayData = teams.length == 0 ? null : teams.map(
         (team) => {
             if (team.id == editingTeam.id) {
                 return (
@@ -155,6 +133,15 @@ function TableTeam() {
 
     return (
         <div className="form-container">
+            <label>
+                Get by id:
+                <input
+                    name="id"
+                    type="number"
+                    value={searchId.id}
+                    onChange={setSearchId} />
+                <button type="button" onClick={() => find()}>Find</button>
+            </label>
             <table>
                 <thead>
                     <tr>

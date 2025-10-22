@@ -1,265 +1,6 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import "./App.css";
-
-
-var demo = [
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 2,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 3,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 4,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    },
-    {
-        id: 1,
-        name: "string",
-        coordinates: {
-            x: -636,
-            y: -128
-        },
-        isRealHero: "true",
-        impactSpeed: 300,
-        soundtrackName: "string",
-        weaponType: "AXE",
-        mood: "SORROW",
-        car: {
-            name: "string",
-            coolness: 0
-        }
-    }
-]
 
 
 function TableHuman() {
@@ -274,6 +15,11 @@ function TableHuman() {
         mood: "SORROW",
         car: { name: "", coolness: 0 },
     })
+    const [humans, setHumans] = useState([])
+
+    useEffect(() => {
+        getAll()
+    }, 1000)
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -299,15 +45,29 @@ function TableHuman() {
     const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
 
     const remove = (humanId) => {
-
+        fetch("https://localhost:8080/api/humans/" + humanId, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        })
     }
 
-    const update = (human) => {
-
-        setHuman({ ...human, id: -1 })
+    const update = () => {
+        fetch("https://localhost:8080/api/humans/" + editingHuman.id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editingHuman),
+        })
+        setHuman({ ...editingHuman, id: -1 })
     }
 
-    const displayData = demo.map(
+    const getAll = () => {
+        fetch("https://localhost:8080/api/humans?from=0&page-size=20&filter&sort-by", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        }).then(resp => resp.json()).then(res => setHumans(res))
+    }
+
+    const displayData = humans.map(
         (human) => {
             if (human.id == editingHuman.id) {
                 return (
@@ -316,7 +76,7 @@ function TableHuman() {
                         <td>
                             <input
                                 name="name"
-                                value={human.name}
+                                value={editingHuman.name}
                                 onChange={handleChange}
                                 required="true" />
                         </td>
@@ -325,7 +85,7 @@ function TableHuman() {
                             <input
                                 type="checkbox"
                                 name="isRealHero"
-                                checked={human.isRealHero}
+                                checked={editingHuman.isRealHero}
                                 onChange={handleChange}
                             />
                             Real hero
@@ -333,7 +93,7 @@ function TableHuman() {
                         <td>
                             <input
                                 name="soundtrackName"
-                                value={human.soundtrackName}
+                                value={editingHuman.soundtrackName}
                                 onChange={handleChange}
                             />
                         </td>
@@ -341,7 +101,7 @@ function TableHuman() {
                             <input
                                 name="impactSpeed"
                                 type="number"
-                                value={human.impactSpeed}
+                                value={editingHuman.impactSpeed}
                                 onChange={handleChange}
                                 required="true"
                             />
@@ -349,7 +109,7 @@ function TableHuman() {
                         <td>
                             <select
                                 name="weaponType"
-                                value={human.weaponType}
+                                value={editingHuman.weaponType}
                                 onChange={handleChange}>
                                 {weaponTypes.map((w) => (
                                     <option key={w} value={w}>
@@ -359,7 +119,7 @@ function TableHuman() {
                             </select>
                         </td>
                         <td>
-                            <select name="mood" value={human.mood} onChange={handleChange}>
+                            <select name="mood" value={editingHuman.mood} onChange={handleChange}>
                                 {moods.map((m) => (
                                     <option key={m} value={m}>
                                         {m}
@@ -379,7 +139,7 @@ function TableHuman() {
                                     <td>
                                         <input
                                             name="name"
-                                            value={human.car.name}
+                                            value={editingHuman.car.name}
                                             onChange={(e) => handleNestedChange(e, "car")}
                                         />
                                     </td>
@@ -387,7 +147,7 @@ function TableHuman() {
                                         <input
                                             name="coolness"
                                             type="number"
-                                            value={human.car.coolness}
+                                            value={editingHuman.car.coolness}
                                             onChange={(e) => handleNestedChange(e, "car")}
                                         />
                                     </td>
@@ -407,7 +167,7 @@ function TableHuman() {
                                         <input
                                             name="x"
                                             type="number"
-                                            value={human.coordinates.x}
+                                            value={editingHuman.coordinates.x}
                                             onChange={(e) => handleNestedChange(e, "coordinates")}
                                             required="true"
                                         />
@@ -416,7 +176,7 @@ function TableHuman() {
                                         <input
                                             name="y"
                                             type="number"
-                                            value={human.coordinates.y}
+                                            value={editingHuman.coordinates.y}
                                             onChange={(e) => handleNestedChange(e, "coordinates")}
                                             required="true"
                                         />
@@ -426,7 +186,7 @@ function TableHuman() {
                         </table></td>
                         <div className='icons'>
                             <div>
-                                <svg onClick={() => update(human)} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><polygon points="9.993 19.421 3.286 12.58 4.714 11.179 10.007 16.579 19.293 7.293 20.707 8.707 9.993 19.421" /></svg>
+                                <svg onClick={() => update()} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><polygon points="9.993 19.421 3.286 12.58 4.714 11.179 10.007 16.579 19.293 7.293 20.707 8.707 9.993 19.421" /></svg>
                             </div>
                             <div>
                                 <svg onClick={() => setHuman({ ...human, id: -1 })} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>5.Cancel</title><g id="_5.Cancel" data-name="5.Cancel"><path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Z" /><rect x="11" y="6.343" width="2" height="11.314" transform="translate(-4.971 12) rotate(-45)" /><rect x="6.343" y="11" width="11.314" height="2" transform="translate(-4.971 12) rotate(-45)" /></g></svg>
@@ -522,6 +282,4 @@ function TableHuman() {
     );
 }
 
-
 export default TableHuman;
-

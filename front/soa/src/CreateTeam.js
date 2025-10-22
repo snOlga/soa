@@ -31,8 +31,9 @@ function CreateTeam() {
 
 
     const handleSubmit = async (e) => {
+        console.log(team)
         e.preventDefault();
-        await fetch("http://localhost:8080/api/humans", {
+        await fetch("https://localhost:18018/teams", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(team),

@@ -23,7 +23,7 @@ public class TeamService {
     HumanRepository humanRepository;
 
     public TeamDTO get(Long id) {
-        return mapper.toDTO(repo.findById(id).orElse(null));
+        return mapper.toDTO(repo.findById(id).orElse(new TeamEntity()));
     }
 
     public TeamDTO create(TeamDTO dto) {

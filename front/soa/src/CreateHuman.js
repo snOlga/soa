@@ -38,12 +38,12 @@ function CreateHuman() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await fetch("http://localhost:8080/api/humans", {
+        console.log(human)
+        await fetch("https://localhost:8080/api/humans", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(human),
         });
-        alert("Sent!");
     };
 
 
@@ -183,8 +183,3 @@ function CreateHuman() {
 
 
 export default CreateHuman;
-
-
-
-
-

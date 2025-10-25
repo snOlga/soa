@@ -38,6 +38,7 @@ input:not([type="submit"], [type="hidden"], [type="checkbox"]) {
 
 select {
   width: 100%;
+  max-height: fit-content;  
 }
 
 
@@ -52,5 +53,17 @@ svg:hover {
 }
 
 button {
-  max-height: 22px;
+  max-height: fit-content;
+}
+
+.filter-section {
+  display: flex;
+}
+
+.filter-row {
+  display: flex;
+}
+
+.get-buttons {
+  display: flex;
 }

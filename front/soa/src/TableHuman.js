@@ -15,11 +15,22 @@ function TableHuman() {
         mood: "SORROW",
         car: { name: "", coolness: 0 },
     })
+    const [filters, setFilters] = useState([{ field: "", sign: "=", value: "" }]);
     const [humans, setHumans] = useState([])
+    const [page, setPage] = useState(0)
+    const [sortingList, setSortingList] = useState([])
+
+    const pageSize = 20;
+    const weaponTypes = ["AXE", "KNIFE", "MACHINE_GUN", "BAT"];
+    const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
+    const fields = ["id", "name", "coordinates", "creationDate", "isRealHero", "impactSpeed", "soundTrackName", "weaponType", "mood", "car", ""]
+    const signs = ["=", "<", ">", "≥", "≤"];
+
 
     useEffect(() => {
-        getAll()
-    }, 1000)
+        getAll();
+    }, [page]);
+
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,7 +39,6 @@ function TableHuman() {
             [name]: type === "checkbox" ? checked : value,
         }));
     };
-
 
     const handleNestedChange = (e, group) => {
         const { name, value } = e.target;
@@ -41,8 +51,27 @@ function TableHuman() {
         }));
     };
 
-    const weaponTypes = ["AXE", "KNIFE", "MACHINE_GUN", "BAT"];
-    const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
+
+    const handleChangeSorting = (e) => {
+        setSortingList([...sortingList, e.target.value])
+    }
+
+
+    const removeField = (it) => {
+        setSortingList(sortingList.filter((f, i) => i !== it));
+    }
+
+
+    const showAllSortingElements = sortingList.map(
+        (field, it) => {
+            return (
+                <label>
+                    <input type='text' value={field} readonly={true} />
+                    <button onClick={() => removeField(it)}>🗑️</button>
+                </label>
+            )
+        })
+
 
     const remove = (humanId) => {
         fetch("https://localhost:8080/api/humans/" + humanId, {
@@ -60,12 +89,45 @@ function TableHuman() {
         setHuman({ ...editingHuman, id: -1 })
     }
 
+    const handleFilterChange = (index, key, value) => {
+        const newFilters = [...filters];
+        newFilters[index][key] = value;
+        setFilters(newFilters);
+    };
+
+    const addFilterRow = () => {
+        setFilters([...filters, { field: "", sign: "=", value: "" }]);
+    };
+
+    const removeFilterRow = (index) => {
+        setFilters(filters.filter((_, i) => i != index));
+    };
+
+    const buildFilterLine = () => {
+        return filters
+            .filter(f => f.field && f.value !== "")
+            .map(f => `${f.field}${f.sign}${f.value}`)
+            .join(";");
+    };
+
     const getAll = () => {
-        fetch("https://localhost:8080/api/humans?from=0&page-size=20&filter&sort-by", {
+        if(page < 0) {
+            setPage(0)
+            return
+        }
+        const sortingLine = sortingList.join(",");
+        const filterLine = buildFilterLine();
+
+        console.log(`https://localhost:8080/api/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`)
+
+        fetch(`https://localhost:8080/api/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
-        }).then(resp => resp.json()).then(res => setHumans(res))
-    }
+        })
+            .then(resp => resp.json())
+            .then(res => setHumans(res));
+    };
+
 
     const displayData = humans.map(
         (human) => {
@@ -186,10 +248,10 @@ function TableHuman() {
                         </table></td>
                         <div className='icons'>
                             <div>
-                                <svg onClick={() => update()} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><polygon points="9.993 19.421 3.286 12.58 4.714 11.179 10.007 16.579 19.293 7.293 20.707 8.707 9.993 19.421" /></svg>
+                                <button onClick={() => update()}>✔️</button>
                             </div>
                             <div>
-                                <svg onClick={() => setHuman({ ...human, id: -1 })} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><title>5.Cancel</title><g id="_5.Cancel" data-name="5.Cancel"><path d="M12,24A12,12,0,1,1,24,12,12.013,12.013,0,0,1,12,24ZM12,2A10,10,0,1,0,22,12,10.011,10.011,0,0,0,12,2Z" /><rect x="11" y="6.343" width="2" height="11.314" transform="translate(-4.971 12) rotate(-45)" /><rect x="6.343" y="11" width="11.314" height="2" transform="translate(-4.971 12) rotate(-45)" /></g></svg>
+                                <button onClick={() => setHuman({ ...human, id: -1 })}>❌</button>
                             </div>
                         </div>
                     </tr>
@@ -201,7 +263,7 @@ function TableHuman() {
                         <td>{human.id}</td>
                         <td>{human.name}</td>
                         <td>{new Date(human.creationDate).toDateString()}</td>
-                        <td>{human.isRealHero}</td>
+                        <td>{human.isRealHero ? "yes" : "no"}</td>
                         <td>{human.soundtrackName}</td>
                         <td>{human.impactSpeed}</td>
                         <td>{human.weaponType}</td>
@@ -244,10 +306,10 @@ function TableHuman() {
                         </table></td>
                         <div className='icons'>
                             <div>
-                                <svg onClick={() => setHuman(human)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30px"><path d="M20.7,5.537a1.024,1.024,0,0,1,0,1.448L8.527,19.158,3,21l1.842-5.527L17.015,3.3a1.024,1.024,0,0,1,1.448,0Z" /></svg>
+                                <button onClick={() => setHuman(human)}>✏️</button>
                             </div>
                             <div>
-                                <svg onClick={() => remove(human.id)} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" width="30px"><defs></defs><g id="trash"><path class="cls-1" d="M20.5,4H16.86l-.69-2.06A1.37,1.37,0,0,0,14.87,1H10.13a1.37,1.37,0,0,0-1.3.94L8.14,4H4.5a.5.5,0,0,0,0,1h.34l1,17.59A1.45,1.45,0,0,0,7.2,24H17.8a1.45,1.45,0,0,0,1.41-1.41L20.16,5h.34a.5.5,0,0,0,0-1ZM9.77,2.26A.38.38,0,0,1,10.13,2h4.74a.38.38,0,0,1,.36.26L15.81,4H9.19Zm8.44,20.27a.45.45,0,0,1-.41.47H7.2a.45.45,0,0,1-.41-.47L5.84,5H19.16Z" /><path class="cls-1" d="M9.5,10a.5.5,0,0,0-.5.5v7a.5.5,0,0,0,1,0v-7A.5.5,0,0,0,9.5,10Z" /><path class="cls-1" d="M12.5,9a.5.5,0,0,0-.5.5v9a.5.5,0,0,0,1,0v-9A.5.5,0,0,0,12.5,9Z" /><path class="cls-1" d="M15.5,10a.5.5,0,0,0-.5.5v7a.5.5,0,0,0,1,0v-7A.5.5,0,0,0,15.5,10Z" /></g></svg>
+                                <button onClick={() => remove(human.id)}>🗑️</button>
                             </div>
                         </div>
                     </tr>
@@ -256,9 +318,65 @@ function TableHuman() {
         }
     )
 
-
     return (
         <div className="form-container">
+            <div className='sort-and-filter-container'>
+                <h2>Sort by</h2>
+                <label>
+                    {showAllSortingElements}
+                    <select name="sortingElement" onChange={handleChangeSorting}>
+                        {fields.map((f) => (
+                            <option key={f} value={f}>
+                                {f}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <h2>Filter by</h2>
+                <div className="filter-section">
+                    {filters.map((f, index) => (
+                        <div key={index} className="filter-row">
+                            <select
+                                value={f.field}
+                                onChange={(e) => handleFilterChange(index, "field", e.target.value)}
+                            >
+                                <option value="">Select field</option>
+                                {fields.map((field) => (
+                                    <option key={field} value={field}>{field}</option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={f.sign}
+                                onChange={(e) => handleFilterChange(index, "sign", e.target.value)}
+                            >
+                                {signs.map((s) => (
+                                    <option key={s} value={s}>{s}</option>
+                                ))}
+                            </select>
+
+                            <input
+                                type="text"
+                                value={f.value}
+                                onChange={(e) => handleFilterChange(index, "value", e.target.value)}
+                                placeholder="Value"
+                            />
+
+                            <button type="button" onClick={() => removeFilterRow(index)}>🗑️</button>
+                        </div>
+                    ))}
+
+                    <button type="button" onClick={addFilterRow}>+ Add Filter</button>
+                </div>
+
+            </div>
+            <h2>Result</h2>
+            <div className='get-buttons'>
+                <button onClick={() => { setPage(page - pageSize) }}>⬅️</button>
+                <button onClick={() => { setPage(page + pageSize) }}>➡️</button>
+                <button onClick={getAll}>Get</button>
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -282,4 +400,8 @@ function TableHuman() {
     );
 }
 
+
 export default TableHuman;
+
+
+

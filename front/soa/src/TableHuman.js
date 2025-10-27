@@ -373,8 +373,8 @@ function TableHuman() {
             </div>
             <h2>Result</h2>
             <div className='get-buttons'>
-                <button onClick={() => { setPage(page - pageSize) }}>⬅️</button>
-                <button onClick={() => { setPage(page + pageSize) }}>➡️</button>
+                <button onClick={() => { setPage(page - 1) }}>⬅️</button>
+                <button onClick={() => { setPage(page + 1) }}>➡️</button>
                 <button onClick={getAll}>Get</button>
             </div>
             <table>

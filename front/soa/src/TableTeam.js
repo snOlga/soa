@@ -9,9 +9,7 @@ function TableTeam() {
         name: "",
         humans: []
     });
-    const [searchId, setSearchId] = useState({
-        id: 0
-    })
+    const [searchId, setSearchId] = useState(0)
 
     const remove = (teamId) => {
         fetch("https://localhost:18018/teams/" + teamId, {
@@ -22,10 +20,9 @@ function TableTeam() {
 
     const update = () => {
         fetch("https://localhost:18018/teams/" + editingTeam.id, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(editingTeam),
-        })
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
         setTeam({ ...editingTeam, id: -1 })
     }
 
@@ -33,30 +30,30 @@ function TableTeam() {
         fetch("https://localhost:18018/teams/" + searchId, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
-        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([...teams, res]) : null)
+        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTeam((prev) => ({
-            ...prev,
-            [name]: name === "humans" ? [...editingTeam.humans] : value,
-        }));
-        if (name == "humans") {
-            if (value == '')
-                return
-            let id = parseInt(value);
-            if (editingTeam.humans.includes(id))
-                return
-            setTeam((prev) => ({
-                ...prev,
-                humans: [...editingTeam.humans, id]
-            }));
-        }
-        console.log(editingTeam)
+        addHuman(value);
     };
 
+    const addHuman = (humanId) => {
+        fetch("https://localhost:18018/teams/" + editingTeam.id + "/members/" + humanId, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
+        setTeam((prev) => ({
+            ...prev,
+            humans: editingTeam.humans.filter(id => id != humanId)
+        }));
+    }
+
     const removeHuman = (humanId) => {
+        fetch("https://localhost:18018/teams/" + editingTeam.id + "/members/" + humanId, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
         setTeam((prev) => ({
             ...prev,
             humans: editingTeam.humans.filter(id => id != humanId)
@@ -73,6 +70,7 @@ function TableTeam() {
                         type="number"
                         value={humanId}
                         onChange={handleChange}
+                        readOnly
                     />
                     <button onClick={() => removeHuman(humanId)}>🗑️</button>
                 </label>
@@ -138,8 +136,9 @@ function TableTeam() {
                 <input
                     name="id"
                     type="number"
-                    value={searchId.id}
-                    onChange={setSearchId} />
+                    value={searchId}
+                    onChange={(e) => setSearchId(e.target.value)}
+                />
                 <button type="button" onClick={() => find()}>Find</button>
             </label>
             <table>

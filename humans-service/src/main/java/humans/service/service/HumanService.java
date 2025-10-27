@@ -40,7 +40,9 @@ public class HumanService {
             throws NoSuchFieldException, SecurityException {
         Sort sortQuery = getSortQuery(sortBy);
         try {
-            return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, (from + pageSize), sortQuery))
+            List<HumanDTO> a = repo.findAll(buildQueryFilter(filter), PageRequest.of(from, pageSize, sortQuery))
+                    .map(mapper::toDTO).toList();
+            return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, pageSize, sortQuery))
                     .map(mapper::toDTO).toList();
         } catch (org.springframework.dao.InvalidDataAccessApiUsageException e) {
             return new ArrayList<>();

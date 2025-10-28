@@ -15,7 +15,7 @@ function TableHuman() {
         mood: "SORROW",
         car: { name: "", coolness: 0 },
     })
-    const [filters, setFilters] = useState([{ field: "", sign: "=", value: "" }]);
+    const [filters, setFilters] = useState([{ field: "id", sign: "=", value: "" }]);
     const [humans, setHumans] = useState([])
     const [page, setPage] = useState(0)
     const [sortingList, setSortingList] = useState([])
@@ -23,19 +23,42 @@ function TableHuman() {
     const pageSize = 20;
     const weaponTypes = ["AXE", "KNIFE", "MACHINE_GUN", "BAT"];
     const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
-    const fields = ["id", 
-        "name", 
-        "coordinates.x", 
-        "coordinates.y", 
-        "creationDate", 
-        "isRealHero", 
-        "impactSpeed", 
-        "soundTrackName", 
-        "weaponType", 
-        "mood", 
-        "car.coolness", 
+    const fieldsSort = [
+        "id",
+        "name",
+        "coordinates",
+        "creationDate",
+        "isRealHero",
+        "impactSpeed",
+        "soundtrackName",
+        "weaponType",
+        "mood",
+        "car"]
+    const fieldsFilter = [
+        "id",
+        "name",
+        "coordinates.x",
+        "coordinates.y",
+        "creationDate",
+        "isRealHero",
+        "impactSpeed",
+        "soundtrackName",
+        "weaponType",
+        "mood",
+        "car.coolness",
         "car.name"]
-    const signs = ["=", "<", ">", "≥", "≤"];
+    const numericFields = [
+        "id",
+        "coordinates.x",
+        "coordinates.y",
+        "impactSpeed",
+        "car.coolness"]
+    const booleanFields = [
+        "isRealHero"]
+    const dateFields = [
+        "creationDate"
+    ]
+    const signs = ["=", "<", ">", ">=", "<="];
 
 
     useEffect(() => {
@@ -76,37 +99,41 @@ function TableHuman() {
         (field, it) => {
             return (
                 <label>
-                    <input type='text' value={field} readonly={true} />
+                    <input type='text' value={field} readonly />
                     <button onClick={() => removeField(it)}>🗑️</button>
                 </label>
             )
         })
 
+    const checkFilterValue = (index, value) => {
+        const newFilters = [...filters];
+        const field = newFilters[index].field;
 
-    const remove = (humanId) => {
-        fetch("https://localhost:8080/api/humans/" + humanId, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" }
-        })
-    }
+        if (field === '')
+            newFilters[index] = { ...newFilters[index], value: '' };
 
-    const update = () => {
-        fetch("https://localhost:8080/api/humans/" + editingHuman.id, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(editingHuman),
-        })
-        setHuman({ ...editingHuman, id: -1 })
-    }
+        const num = Number(value);
+        if (numericFields.includes(field) && (!Number.isInteger(num) || num <= 0))
+            newFilters[index] = { ...newFilters[index], value: value.slice(0, -1) };
+
+        if (booleanFields.includes(field) &&
+            !['true', 'false', 't', 'f'].includes(value.toLowerCase()))
+            newFilters[index] = { ...newFilters[index], value: value.slice(0, -1) };
+
+        setFilters(newFilters);
+    };
+
 
     const handleFilterChange = (index, key, value) => {
         const newFilters = [...filters];
         newFilters[index][key] = value;
         setFilters(newFilters);
+        if (key == 'value')
+            checkFilterValue(index, value)
     };
 
     const addFilterRow = () => {
-        setFilters([...filters, { field: "", sign: "=", value: "" }]);
+        setFilters([...filters, { field: "id", sign: "=", value: "" }]);
     };
 
     const removeFilterRow = (index) => {
@@ -125,7 +152,7 @@ function TableHuman() {
             setPage(0)
             return
         }
-        const sortingLine = sortingList.join(",");
+        const sortingLine = sortingList.join(";");
         const filterLine = buildFilterLine();
 
         console.log(`https://localhost:8080/api/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`)
@@ -136,8 +163,23 @@ function TableHuman() {
         })
             .then(resp => resp.json())
             .then(res => setHumans(res));
-    };
+    }
 
+    const remove = (humanId) => {
+        fetch("https://localhost:8080/api/humans/" + humanId, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        })
+    }
+
+    const update = () => {
+        fetch("https://localhost:8080/api/humans/" + editingHuman.id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editingHuman),
+        })
+        setHuman({ ...editingHuman, id: -1 })
+    }
 
     const displayData = humans.map(
         (human) => {
@@ -335,7 +377,7 @@ function TableHuman() {
                 <label>
                     {showAllSortingElements}
                     <select name="sortingElement" onChange={handleChangeSorting}>
-                        {fields.map((f) => (
+                        {fieldsSort.map((f) => (
                             <option key={f} value={f}>
                                 {f}
                             </option>
@@ -351,8 +393,8 @@ function TableHuman() {
                                 value={filter.field}
                                 onChange={(e) => handleFilterChange(index, "field", e.target.value)}
                             >
-                                <option value="">Select field</option>
-                                {fields.map((field) => (
+                                {/* <option value="">Select field</option> */}
+                                {fieldsFilter.map((field) => (
                                     <option key={field} value={field}>{field}</option>
                                 ))}
                             </select>

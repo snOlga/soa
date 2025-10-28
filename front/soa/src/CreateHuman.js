@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
 
-
 function CreateHuman() {
     const [human, setHuman] = useState({
         name: "",
@@ -11,46 +10,64 @@ function CreateHuman() {
         soundtrackName: "",
         weaponType: "AXE",
         mood: "SORROW",
-        car: { name: "", coolness: 0 },
+        car: { name: "", coolness: "" },
     });
 
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        let val = value;
+        if (type === "text") val = val.replace(/[0-9]/g, "");
         setHuman((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: type === "checkbox" ? checked : val,
         }));
     };
 
-
     const handleNestedChange = (e, group) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
+        let val = value;
+        if (type === "text") val = val.replace(/[0-9]/g, "");
         setHuman((prev) => ({
             ...prev,
             [group]: {
                 ...prev[group],
-                [name]: value,
+                [name]: val,
             },
         }));
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(human)
-        await fetch("https://localhost:8080/api/humans", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(human),
-        });
+        setError("")
+
+        const dataToSend = {
+            ...human,
+            car: human.car.name ? human.car : null,
+        };
+
+        console.log(dataToSend)
+
+        try {
+            const response = await fetch("https://localhost:8080/api/humans", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dataToSend),
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                setError(text || `Server error (${response.status})`);
+                return;
+            }
+        } catch (err) {
+            setError("Failed to send data to the server.");
+        }
     };
 
-
-    // enum options
     const weaponTypes = ["AXE", "KNIFE", "MACHINE_GUN", "BAT"];
     const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
-
 
     return (
         <div className="form-container">
@@ -60,11 +77,12 @@ function CreateHuman() {
                     Name:
                     <input
                         name="name"
+                        type="text"
                         value={human.name}
                         onChange={handleChange}
-                        required="true" />
+                        required
+                    />
                 </label>
-
 
                 <fieldset>
                     <legend>Coordinates</legend>
@@ -75,7 +93,9 @@ function CreateHuman() {
                             type="number"
                             value={human.coordinates.x}
                             onChange={(e) => handleNestedChange(e, "coordinates")}
-                            required="true"
+                            required
+                            min={-636}
+                            max={636}
                         />
                     </label>
                     <label>
@@ -85,11 +105,12 @@ function CreateHuman() {
                             type="number"
                             value={human.coordinates.y}
                             onChange={(e) => handleNestedChange(e, "coordinates")}
-                            required="true"
+                            required
+                            min={-636}
+                            max={636}
                         />
                     </label>
                 </fieldset>
-
 
                 <fieldset>
                     <legend>Car</legend>
@@ -108,10 +129,11 @@ function CreateHuman() {
                             type="number"
                             value={human.car.coolness}
                             onChange={(e) => handleNestedChange(e, "car")}
+                            min={0}
+                            max={100}
                         />
                     </label>
                 </fieldset>
-
 
                 <label>
                     Impact speed:
@@ -120,10 +142,11 @@ function CreateHuman() {
                         type="number"
                         value={human.impactSpeed}
                         onChange={handleChange}
-                        required="true"
+                        required
+                        min={0}
+                        max={100}
                     />
                 </label>
-
 
                 <label>
                     Soundtrack:
@@ -131,9 +154,9 @@ function CreateHuman() {
                         name="soundtrackName"
                         value={human.soundtrackName}
                         onChange={handleChange}
+                        required
                     />
                 </label>
-
 
                 <label>
                     Weapon:
@@ -149,7 +172,6 @@ function CreateHuman() {
                     </select>
                 </label>
 
-
                 <label>
                     Mood:
                     <select name="mood" value={human.mood} onChange={handleChange}>
@@ -160,7 +182,6 @@ function CreateHuman() {
                         ))}
                     </select>
                 </label>
-
 
                 <div className="checkbox-group">
                     <label>
@@ -174,12 +195,12 @@ function CreateHuman() {
                     </label>
                 </div>
 
-
                 <button type="submit">Send</button>
             </form>
+
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
 }
-
 
 export default CreateHuman;

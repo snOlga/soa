@@ -1,70 +1,68 @@
 import React, { useState } from "react";
 import "./App.css";
 
-
 function CreateTeam() {
     const [team, setTeam] = useState({
         name: "",
-        humans: [1, 2]
+        humans: [1, 2],
     });
-
+    const [error, setError] = useState("");
+    const [currentHumanId, setCurrentHumanId] = useState(""); // ← store typed value
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTeam((prev) => ({
-            ...prev,
-            [name]: name === "humans" ? [...team.humans] : value,
-        }));
-        if (name == "humans") {
-            if (value == '')
-                return
-            let id = parseInt(value);
+
+        if (name === "name") {
+            setTeam((prev) => ({ ...prev, name: value }));
+        } else if (name === "humans") {
+            setCurrentHumanId(value);
+        }
+    };
+
+    const handleAddHuman = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const id = parseInt(currentHumanId);
+
             if (team.humans.includes(id))
-                return
+                return setError("Human is already in team");
+
+            setError("");
+
             setTeam((prev) => ({
                 ...prev,
-                humans: [...team.humans, id]
+                humans: [...prev.humans, id],
             }));
-        }
-        console.log(team)
-    };
 
+            setCurrentHumanId("");
+        }
+    };
 
     const handleSubmit = async (e) => {
-        console.log(team)
         e.preventDefault();
-        await fetch("https://localhost:18018/teams", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(team),
-        });
-    };
+        try {
+            const response = await fetch("https://localhost:18018/teams", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(team),
+            });
 
+            if (!response.ok) {
+                const text = await response.text();
+                setError(text || `Server error (${response.status})`);
+                return;
+            }
+        } catch (err) {
+            setError("Failed to send data to the server.");
+        }
+    };
 
     const removeHuman = (humanId) => {
         setTeam((prev) => ({
             ...prev,
-            humans: team.humans.filter(id => id != humanId)
+            humans: prev.humans.filter((id) => id !== humanId),
         }));
-    }
-
-
-    const showAllHumans = team.humans.map(
-        (humanId) => {
-            return (
-                <label>
-                    Member:
-                    <input
-                        name="humans"
-                        type="number"
-                        value={humanId}
-                        onChange={handleChange}
-                    />
-                    <button onClick={() => removeHuman(humanId)}>🗑️</button>
-                </label>
-            )
-        })
-
+    };
 
     return (
         <div className="form-container">
@@ -76,32 +74,44 @@ function CreateTeam() {
                         name="name"
                         value={team.name}
                         onChange={handleChange}
-                        required="true" />
+                        required
+                    />
                 </label>
 
+                {team.humans.map((humanId) => (
+                    <label key={humanId}>
+                        Member:
+                        <input
+                            name="humans"
+                            type="number"
+                            value={humanId}
+                            readOnly
+                        />
+                        <button type="button" onClick={() => removeHuman(humanId)}>
+                            🗑️
+                        </button>
+                    </label>
+                ))}
 
-                {showAllHumans}
                 <label>
                     Member:
                     <input
                         name="humans"
                         type="number"
+                        value={currentHumanId}
                         onChange={handleChange}
-                        required={team.humans.length == 0}
+                        onKeyDown={handleAddHuman}
+                        placeholder="Type ID and press Enter"
+                        min={0}
                     />
                 </label>
 
-
                 <button type="submit">Send</button>
             </form>
+
+            {error && <p className="error-message">{error}</p>}
         </div>
     );
 }
 
-
 export default CreateTeam;
-
-
-
-
-

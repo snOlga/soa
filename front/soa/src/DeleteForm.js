@@ -9,21 +9,19 @@ function DeleteForm() {
     const [deleteAll, setDeleteAll] = useState(false);
     const [coolness, setCoolness] = useState(0);
 
-    const deleteByWeapon = async (e) => { //TODO: all doesnt work
+    const deleteByWeapon = async (e) => {
         e.preventDefault();
         await fetch("https://localhost:8080/api/humans/by-weapon" + (deleteAll ? "-all" : "") + "?weapon-type=" + weaponType, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            // body: JSON.stringify(team),
+            headers: { "Content-Type": "application/json" }
         });
     };
 
-    const deleteByCoolness = async (e) => { //TODO: proper filter
+    const deleteByCoolness = async (e) => { 
         e.preventDefault();
         await fetch("https://localhost:8080/api/humans/less-cool-car" + "?max-coolness=" + coolness, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            // body: JSON.stringify(team),
+            headers: { "Content-Type": "application/json" }
         });
     };
 

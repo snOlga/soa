@@ -23,14 +23,24 @@ function TableHuman() {
     const pageSize = 20;
     const weaponTypes = ["AXE", "KNIFE", "MACHINE_GUN", "BAT"];
     const moods = ["SORROW", "LONGING", "GLOOM", "APATHY", "FRENZY"];
-    const fields = ["id", "name", "coordinates", "creationDate", "isRealHero", "impactSpeed", "soundTrackName", "weaponType", "mood", "car", ""]
+    const fields = ["id", 
+        "name", 
+        "coordinates.x", 
+        "coordinates.y", 
+        "creationDate", 
+        "isRealHero", 
+        "impactSpeed", 
+        "soundTrackName", 
+        "weaponType", 
+        "mood", 
+        "car.coolness", 
+        "car.name"]
     const signs = ["=", "<", ">", "≥", "≤"];
 
 
     useEffect(() => {
         getAll();
     }, [page]);
-
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -111,7 +121,7 @@ function TableHuman() {
     };
 
     const getAll = () => {
-        if(page < 0) {
+        if (page < 0) {
             setPage(0)
             return
         }
@@ -335,10 +345,10 @@ function TableHuman() {
 
                 <h2>Filter by</h2>
                 <div className="filter-section">
-                    {filters.map((f, index) => (
+                    {filters.map((filter, index) => (
                         <div key={index} className="filter-row">
                             <select
-                                value={f.field}
+                                value={filter.field}
                                 onChange={(e) => handleFilterChange(index, "field", e.target.value)}
                             >
                                 <option value="">Select field</option>
@@ -348,7 +358,7 @@ function TableHuman() {
                             </select>
 
                             <select
-                                value={f.sign}
+                                value={filter.sign}
                                 onChange={(e) => handleFilterChange(index, "sign", e.target.value)}
                             >
                                 {signs.map((s) => (
@@ -358,7 +368,7 @@ function TableHuman() {
 
                             <input
                                 type="text"
-                                value={f.value}
+                                value={filter.value}
                                 onChange={(e) => handleFilterChange(index, "value", e.target.value)}
                                 placeholder="Value"
                             />

@@ -57,7 +57,7 @@ button {
 }
 
 .filter-section {
-  display: flex;
+  /* display: flex; */
 }
 
 .filter-row {

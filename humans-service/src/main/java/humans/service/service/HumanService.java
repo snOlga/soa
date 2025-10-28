@@ -11,6 +11,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.criteria.Path;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 import soa.models.enums.WeaponType;
@@ -40,8 +41,6 @@ public class HumanService {
             throws NoSuchFieldException, SecurityException {
         Sort sortQuery = getSortQuery(sortBy);
         try {
-            List<HumanDTO> a = repo.findAll(buildQueryFilter(filter), PageRequest.of(from, pageSize, sortQuery))
-                    .map(mapper::toDTO).toList();
             return repo.findAll(buildQueryFilter(filter), PageRequest.of(from, pageSize, sortQuery))
                     .map(mapper::toDTO).toList();
         } catch (org.springframework.dao.InvalidDataAccessApiUsageException e) {
@@ -67,7 +66,7 @@ public class HumanService {
         return spec;
     }
 
-    private static final Pattern CONDITION_PATTERN = Pattern.compile("(\\w+)([<>!=]=?|==)([^;]+)");
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("(\\w+.\\w+|\\w+)([<>!=]=?|==)([^;]+)");
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Specification<HumanEntity> buildSpecQueryFromOneFilter(Matcher matcher) {
@@ -76,24 +75,29 @@ public class HumanService {
         String value = matcher.group(3).replaceAll("'", "").trim();
         Object typedValue = convertValue(value);
         return (root, query, builder) -> {
+            Path<HumanEntity> path = root;
+            String currField = field.split("\\.")[0];
+            if (field.split("\\.").length > 1) {
+                path = path.get(currField);
+                currField = field.split("\\.")[1];
+            }
             switch (operator) {
                 case "=", "==":
-                    return builder.equal(root.get(field), typedValue);
+                    return builder.equal(path.get(currField), typedValue);
                 case "!=":
-                    return builder.notEqual(root.get(field), typedValue);
+                    return builder.notEqual(path.get(currField), typedValue);
                 case ">":
-                    return builder.greaterThan(root.get(field), (Comparable) typedValue);
+                    return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 case ">=":
-                    return builder.greaterThanOrEqualTo(root.get(field), (Comparable) typedValue);
+                    return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 case "<":
-                    return builder.lessThan(root.get(field), (Comparable) typedValue);
+                    return builder.lessThan(path.get(currField), (Comparable) typedValue);
                 case "<=":
-                    return builder.lessThanOrEqualTo(root.get(field), (Comparable) typedValue);
+                    return builder.lessThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 default:
                     throw new IllegalArgumentException("Unsupported operator: " + operator);
             }
         };
-
     }
 
     private Object convertValue(String value) {
@@ -104,13 +108,12 @@ public class HumanService {
                 return parseBoolean(value);
             } catch (Exception e2) {
                 try {
-                    Double.valueOf(value);
+                    return Double.valueOf(value);
                 } catch (Exception e3) {
                     return value;
                 }
             }
         }
-        return value;
     }
 
     private Boolean parseBoolean(String value) throws ParseException {
@@ -144,7 +147,7 @@ public class HumanService {
     }
 
     public HumanDTO deleteByWeaponType(WeaponType type) {
-        HumanEntity entity = repo.findByWeaponType(type);
+        HumanEntity entity = repo.findByWeaponType(type, PageRequest.of(0, 1)).toList().get(0);
         if (entity == null)
             return null;
         entity.setIsDeleted(true);

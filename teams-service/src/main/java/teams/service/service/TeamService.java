@@ -1,10 +1,12 @@
 package teams.service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import soa.models.DTO.HumanDTO;
 import soa.models.exception.HumanNotFoundException;
-import soa.models.repository.HumanRepository;
 import teams.service.dto.TeamDTO;
 import teams.service.entity.TeamEntity;
 import teams.service.exception.HumanAlreadyInTeamException;
@@ -20,15 +22,20 @@ public class TeamService {
     @Autowired
     TeamMapper mapper;
     @Autowired
-    HumanRepository humanRepository;
+    RestTemplate restTemplate;
+    @Value("${urls.human-service}")
+    String humanServiceUrl;
 
     public TeamDTO get(Long id) {
+        if (!repo.existsById(id))
+            throw new TeamNotFoundException();
+        removeAllDeletedHumans(id);
         return mapper.toDTO(repo.findById(id).orElse(new TeamEntity()));
     }
 
     public TeamDTO create(TeamDTO dto) {
         for (Long humanId : dto.getHumans()) {
-            if (!humanRepository.existsById(humanId))
+            if (getHuman(humanId) == null)
                 throw new HumanNotFoundException();
         }
         TeamEntity entity = mapper.toEntity(dto);
@@ -45,6 +52,7 @@ public class TeamService {
 
     public TeamDTO add(Long teamId, Long humanId) {
         checkTeamAndHuman(teamId, humanId);
+        removeAllDeletedHumans(teamId);
         TeamEntity entity = repo.findById(teamId).get();
 
         if (entity.getHumans().contains(humanId))
@@ -55,6 +63,7 @@ public class TeamService {
 
     public TeamDTO deleteMember(Long teamId, Long humanId) {
         checkTeamAndHuman(teamId, humanId);
+        removeAllDeletedHumans(teamId);
         TeamEntity entity = repo.findById(teamId).get();
 
         if (!entity.getHumans().contains(humanId))
@@ -66,7 +75,25 @@ public class TeamService {
     private void checkTeamAndHuman(Long teamId, Long humanId) {
         if (!repo.existsById(teamId))
             throw new TeamNotFoundException();
-        if (!humanRepository.existsById(humanId))
+        HumanDTO a = getHuman(humanId);
+        if (a == null)
             throw new HumanNotFoundException();
+    }
+
+    private HumanDTO getHuman(Long id) {
+        return restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
+    }
+
+    private void removeAllDeletedHumans(Long teamId) {
+        TeamEntity entity = repo.findById(teamId).get();
+        entity.setHumans(entity.getHumans().stream().filter(humanId -> {
+            try {
+                getHuman(humanId);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }).toList());
+        repo.save(entity);
     }
 }

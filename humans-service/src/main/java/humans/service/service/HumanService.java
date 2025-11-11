@@ -5,42 +5,29 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Service;
 
-import humans.service.config.SpringJpaConfig;
+import humans.service.config.ContextConfig;
 import jakarta.persistence.criteria.Path;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 import soa.models.enums.WeaponType;
 import soa.models.exception.HumanNotFoundException;
-import soa.models.mapper.CarMapper;
-import soa.models.mapper.CoordinatesMapper;
 import soa.models.mapper.HumanMapper;
 import soa.models.repository.HumanRepository;
-import jakarta.persistence.EntityManager;
 
 @Service
 public class HumanService {
 
     HumanRepository repo;
     HumanMapper mapper;
-    private static final AnnotationConfigApplicationContext context = 
-        new AnnotationConfigApplicationContext(SpringJpaConfig.class);
+    ContextConfig springContex = new ContextConfig();
 
     public HumanService() {
-        // context.refresh();
-        context.registerBean(CoordinatesMapper.class);
-        context.registerBean(CarMapper.class);
-        context.registerBean(HumanMapper.class);
-        mapper = context.getBean(HumanMapper.class);
-        context.registerBean(EntityManager.class);
-        // EntityManager em = context.getBean(EntityManager.class);
-        // JpaRepositoryFactory factory = new JpaRepositoryFactory(em);
-        repo = context.getBean(HumanRepository.class);
+        mapper = springContex.getSpringContext().getBean(HumanMapper.class);
+        repo = springContex.getSpringContext().getBean(HumanRepository.class);
     }
 
     public HumanDTO save(HumanDTO dto) {

@@ -8,7 +8,7 @@ import humans.service.resourse.HumanResouce;
 import jakarta.ws.rs.ApplicationPath;
 
 @Component
-@ApplicationPath("/api")
+@ApplicationPath("")
 public class JerseyConfig extends ResourceConfig {
 
     public JerseyConfig() {

@@ -11,7 +11,7 @@ function DeleteForm() {
 
     const deleteByWeapon = async (e) => {
         e.preventDefault();
-        await fetch("https://localhost:8080/api/humans/by-weapon" + (deleteAll ? "-all" : "") + "?weapon-type=" + weaponType, {
+        await fetch("https://localhost:18018/humans/by-weapon" + (deleteAll ? "-all" : "") + "?weapon-type=" + weaponType, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });
@@ -19,7 +19,7 @@ function DeleteForm() {
 
     const deleteByCoolness = async (e) => { 
         e.preventDefault();
-        await fetch("https://localhost:8080/api/humans/less-cool-car" + "?max-coolness=" + coolness, {
+        await fetch("https://localhost:18018/humans/less-cool-car" + "?max-coolness=" + coolness, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         });

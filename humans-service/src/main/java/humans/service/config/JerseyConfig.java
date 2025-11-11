@@ -14,5 +14,6 @@ public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
         register(HumanResouce.class);
         register(CorsFilter.class);
+        register(SpringJerseyBinder.class);
     }
 }

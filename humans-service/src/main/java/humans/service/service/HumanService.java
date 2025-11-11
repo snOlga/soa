@@ -5,27 +5,43 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.tomcat.util.json.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.stereotype.Service;
 
+import humans.service.config.SpringJpaConfig;
 import jakarta.persistence.criteria.Path;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 import soa.models.enums.WeaponType;
 import soa.models.exception.HumanNotFoundException;
+import soa.models.mapper.CarMapper;
+import soa.models.mapper.CoordinatesMapper;
 import soa.models.mapper.HumanMapper;
 import soa.models.repository.HumanRepository;
+import jakarta.persistence.EntityManager;
 
 @Service
 public class HumanService {
 
-    @Autowired
     HumanRepository repo;
-    @Autowired
     HumanMapper mapper;
+    private static final AnnotationConfigApplicationContext context = 
+        new AnnotationConfigApplicationContext(SpringJpaConfig.class);
+
+    public HumanService() {
+        // context.refresh();
+        context.registerBean(CoordinatesMapper.class);
+        context.registerBean(CarMapper.class);
+        context.registerBean(HumanMapper.class);
+        mapper = context.getBean(HumanMapper.class);
+        context.registerBean(EntityManager.class);
+        // EntityManager em = context.getBean(EntityManager.class);
+        // JpaRepositoryFactory factory = new JpaRepositoryFactory(em);
+        repo = context.getBean(HumanRepository.class);
+    }
 
     public HumanDTO save(HumanDTO dto) {
         HumanEntity entity = mapper.toEntity(dto);
@@ -116,14 +132,14 @@ public class HumanService {
         }
     }
 
-    private Boolean parseBoolean(String value) throws ParseException {
+    private Boolean parseBoolean(String value) throws Exception {
         switch (value.toLowerCase()) {
             case "t", "true":
                 return true;
             case "f", "false":
                 return false;
             default:
-                throw new ParseException("Cannot parse Boolean from string: " + value);
+                throw new Exception("Cannot parse Boolean from string: " + value);
         }
     }
 

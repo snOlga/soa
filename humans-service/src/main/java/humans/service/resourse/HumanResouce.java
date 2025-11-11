@@ -1,6 +1,5 @@
 package humans.service.resourse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import humans.service.service.HumanService;
@@ -14,8 +13,7 @@ import soa.models.exception.IncorrectPageSizeException;
 @Path("/humans")
 public class HumanResouce {
 
-    @Autowired
-    HumanService humanService;
+    HumanService humanService = new HumanService();
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)

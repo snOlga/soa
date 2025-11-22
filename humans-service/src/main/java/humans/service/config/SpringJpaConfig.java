@@ -26,8 +26,8 @@ public class SpringJpaConfig {
     @Bean
     public DataSource dataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:postgresql://localhost:5433/postgres")
-                .username("postgres")
+                .url("jdbc:postgresql://localhost:5432/postgres")
+                .username("1")
                 .password("1")
                 .driverClassName("org.postgresql.Driver")
                 .build();

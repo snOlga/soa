@@ -1,10 +1,10 @@
 set configs.config.server-config.network-config.protocols.protocol.http-listener-1.security-enabled=true
 set configs.config.server-config.network-config.protocols.protocol.http-listener-1.http.http2-timeout-seconds=300
 
-create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=postgres:password=1:DatabaseName=postgres:ServerName=localhost:PortNumber=5433 HumanPU
+create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=a:password=a:DatabaseName=studs:ServerName=localhost:PortNumber=5432 HumanPU
 
 create-jdbc-resource --connectionpoolid HumanPU jdbc/human_db
 
-create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=postgres:password=1:DatabaseName=postgres:ServerName=localhost:PortNumber=5433 TeamsPU
+create-jdbc-connection-pool --datasourceclassname org.postgresql.ds.PGSimpleDataSource --restype javax.sql.DataSource --property user=a:password=a:DatabaseName=studs:ServerName=localhost:PortNumber=5432 TeamsPU
 
 create-jdbc-resource --connectionpoolid TeamshPU jdbc/teams_db

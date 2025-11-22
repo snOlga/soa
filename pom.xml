@@ -18,6 +18,7 @@
         <module>model</module>
         <module>teams-service</module>
         <module>humans-service</module>
+		<module>teams-ejb-service</module>
     </modules>
 
 </project>

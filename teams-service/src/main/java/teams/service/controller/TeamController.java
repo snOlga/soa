@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ejb.service.ejb.i.HelloStatelessWorld;
 import teams.service.dto.TeamDTO;
 import teams.service.service.TeamService;
 
@@ -21,6 +22,18 @@ public class TeamController {
     
     @Autowired
     TeamService service;
+
+    private final HelloStatelessWorld helloService;
+
+    // Spring injects the EJB Proxy defined in the Config class
+    public TeamController(HelloStatelessWorld helloService) {
+        this.helloService = helloService;
+    }
+
+    @GetMapping("/stateless")
+    public String getStateless() {
+        return helloService.getHelloWorld();
+    }
 
     @CrossOrigin
     @GetMapping("/{id}")

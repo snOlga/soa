@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import humans.service.config.ContextConfig;
 import jakarta.persistence.criteria.Path;
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
@@ -21,14 +21,10 @@ import soa.models.repository.HumanRepository;
 @Service
 public class HumanService {
 
+    @Autowired
     HumanRepository repo;
+    @Autowired
     HumanMapper mapper;
-    ContextConfig springContex = new ContextConfig();
-
-    public HumanService() {
-        mapper = springContex.getSpringContext().getBean(HumanMapper.class);
-        repo = springContex.getSpringContext().getBean(HumanRepository.class);
-    }
 
     public HumanDTO save(HumanDTO dto) {
         HumanEntity entity = mapper.toEntity(dto);

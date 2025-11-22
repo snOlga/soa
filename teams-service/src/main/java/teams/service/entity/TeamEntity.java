@@ -3,12 +3,14 @@ package teams.service.entity;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
-import org.hibernate.type.SqlTypes;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.*;
 
 @Setter
@@ -18,6 +20,7 @@ import lombok.*;
 @Entity
 @Table(name = "teams")
 @Where(clause = "is_deleted = false")
+@TypeDef(name = "json", typeClass = JsonBinaryType.class)
 public class TeamEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +32,7 @@ public class TeamEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Type(type = "json")
     @Column(name = "humans")
     private List<Long> humans;
 

@@ -3,8 +3,8 @@ package soa.models.entity;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 import lombok.*;
 
 @Setter

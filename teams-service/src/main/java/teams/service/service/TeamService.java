@@ -21,8 +21,8 @@ public class TeamService {
     TeamRepository repo;
     @Autowired
     TeamMapper mapper;
-    @Autowired
-    RestTemplate restTemplate;
+    // @Autowired
+    // RestTemplate restTemplate;
     @Value("${urls.human-service}")
     String humanServiceUrl;
 
@@ -81,19 +81,19 @@ public class TeamService {
     }
 
     private HumanDTO getHuman(Long id) {
-        return restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
+        return new HumanDTO(); //restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
     }
 
     private void removeAllDeletedHumans(Long teamId) {
         TeamEntity entity = repo.findById(teamId).get();
-        entity.setHumans(entity.getHumans().stream().filter(humanId -> {
-            try {
-                getHuman(humanId);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }).toList());
+        // entity.setHumans(entity.getHumans().stream().filter(humanId -> {
+        //     try {
+        //         getHuman(humanId);
+        //         return true;
+        //     } catch (Exception e) {
+        //         return false;
+        //     }
+        // }).toList());
         repo.save(entity);
     }
 }

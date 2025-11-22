@@ -1,6 +1,6 @@
 package soa.models.DTO;
 
-import jakarta.validation.constraints.*;
+import javax.validation.constraints.*;
 import lombok.*;
 
 @Setter

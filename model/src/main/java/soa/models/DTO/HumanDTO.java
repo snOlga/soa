@@ -2,7 +2,7 @@ package soa.models.DTO;
 
 import java.time.LocalDateTime;
 
-import jakarta.validation.constraints.*;
+import javax.validation.constraints.*;
 import lombok.*;
 import soa.models.enums.Mood;
 import soa.models.enums.WeaponType;

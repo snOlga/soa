@@ -83,7 +83,8 @@ public class HumanService {
                 currField = field.split("\\.")[1];
             }
             switch (operator) {
-                case "=", "==":
+                case "=":
+                case "==":
                     return builder.equal(path.get(currField), typedValue);
                 case "!=":
                     return builder.notEqual(path.get(currField), typedValue);
@@ -119,9 +120,11 @@ public class HumanService {
 
     private Boolean parseBoolean(String value) throws Exception {
         switch (value.toLowerCase()) {
-            case "t", "true":
+            case "t":
+            case "true":
                 return true;
-            case "f", "false":
+            case "f":
+            case "false":
                 return false;
             default:
                 throw new Exception("Cannot parse Boolean from string: " + value);

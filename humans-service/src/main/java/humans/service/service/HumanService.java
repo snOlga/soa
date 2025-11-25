@@ -10,7 +10,8 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.criteria.Path;
+import javax.persistence.criteria.Path;
+
 import soa.models.DTO.HumanDTO;
 import soa.models.entity.HumanEntity;
 import soa.models.enums.WeaponType;
@@ -56,7 +57,8 @@ public class HumanService {
 
     private Specification<HumanEntity> buildQueryFilter(String filter) {
         if (filter.isBlank() || filter.isEmpty())
-            return Specification.unrestricted();
+            return Specification.where(null);
+
         Matcher matcher = CONDITION_PATTERN.matcher(filter);
         Specification<HumanEntity> spec = Specification.not(null);
         while (matcher.find()) {
@@ -86,7 +88,7 @@ public class HumanService {
                 case "!=":
                     return builder.notEqual(path.get(currField), typedValue);
                 case ">":
-                    return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
+                    return builder.greaterThan(path.get(currField), (Comparable) typedValue);
                 case ">=":
                     return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 case "<":

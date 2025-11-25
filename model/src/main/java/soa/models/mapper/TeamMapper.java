@@ -1,11 +1,11 @@
-package teams.service.mapper;
+package soa.models.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
 
-import teams.service.dto.TeamDTO;
-import teams.service.entity.TeamEntity;
+import soa.models.DTO.TeamDTO;
+import soa.models.entity.TeamEntity;
 
 @Component
 public class TeamMapper {

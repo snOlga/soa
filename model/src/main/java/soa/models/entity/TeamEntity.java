@@ -1,4 +1,4 @@
-package teams.service.entity;
+package soa.models.entity;
 
 import java.util.List;
 
@@ -20,7 +20,10 @@ import lombok.*;
 @Entity
 @Table(name = "teams")
 @Where(clause = "is_deleted = false")
-@TypeDef(name = "json", typeClass = JsonBinaryType.class)
+@TypeDef(
+    name = "json",
+    typeClass = JsonBinaryType.class
+)
 public class TeamEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

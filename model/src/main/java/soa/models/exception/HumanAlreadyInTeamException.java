@@ -1,4 +1,4 @@
-package teams.service.exception;
+package soa.models.exception;
 
 public class HumanAlreadyInTeamException extends RuntimeException {
     

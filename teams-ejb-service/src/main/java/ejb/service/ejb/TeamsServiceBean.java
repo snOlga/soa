@@ -1,38 +1,43 @@
-package teams.service.service;
+package ejb.service.ejb;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import ejb.service.ejb.i.TeamsService;
+import ejb.service.repository.TeamRepository;
+import soa.models.DTO.HumanDTO;
+import soa.models.DTO.TeamDTO;
+import soa.models.entity.TeamEntity;
+import soa.models.exception.HumanAlreadyInTeamException;
+import soa.models.exception.HumanNotFoundException;
+import soa.models.exception.TeamNotFoundException;
+import soa.models.mapper.TeamMapper;
+
+import java.util.stream.Collectors;
+
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.springframework.web.client.RestTemplate;
 
-import soa.models.DTO.HumanDTO;
-import soa.models.exception.HumanNotFoundException;
-import teams.service.dto.TeamDTO;
-import teams.service.entity.TeamEntity;
-import teams.service.exception.HumanAlreadyInTeamException;
-import teams.service.exception.TeamNotFoundException;
-import teams.service.mapper.TeamMapper;
-import teams.service.repository.TeamRepository;
+@Stateless(name = "TeamsServiceBean")
+public class TeamsServiceBean implements TeamsService {
 
-@Service
-public class TeamService {
-
-    @Autowired
+    @Inject
     TeamRepository repo;
-    @Autowired
-    TeamMapper mapper;
-    // @Autowired
-    // RestTemplate restTemplate;
-    @Value("${urls.human-service}")
+    TeamMapper mapper = new TeamMapper();
+    @Inject
+    RestTemplate restTemplate;
+    @ConfigProperty(name = "urls.human-service")
     String humanServiceUrl;
 
+    @Override
     public TeamDTO get(Long id) {
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
         removeAllDeletedHumans(id);
-        return mapper.toDTO(repo.findById(id).orElse(new TeamEntity()));
+        return mapper.toDTO(repo.findById(id));
     }
 
+    @Override
     public TeamDTO create(TeamDTO dto) {
         for (Long humanId : dto.getHumans()) {
             if (getHuman(humanId) == null)
@@ -42,18 +47,20 @@ public class TeamService {
         return mapper.toDTO(repo.save(entity));
     }
 
+    @Override
     public TeamDTO delete(Long id) {
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
-        TeamEntity entity = repo.findById(id).get();
+        TeamEntity entity = repo.findById(id);
         entity.setIsDeleted(true);
         return mapper.toDTO(repo.save(entity));
     }
 
+    @Override
     public TeamDTO add(Long teamId, Long humanId) {
         checkTeamAndHuman(teamId, humanId);
         removeAllDeletedHumans(teamId);
-        TeamEntity entity = repo.findById(teamId).get();
+        TeamEntity entity = repo.findById(teamId);
 
         if (entity.getHumans().contains(humanId))
             throw new HumanAlreadyInTeamException();
@@ -61,10 +68,11 @@ public class TeamService {
         return mapper.toDTO(repo.save(entity));
     }
 
+    @Override
     public TeamDTO deleteMember(Long teamId, Long humanId) {
         checkTeamAndHuman(teamId, humanId);
         removeAllDeletedHumans(teamId);
-        TeamEntity entity = repo.findById(teamId).get();
+        TeamEntity entity = repo.findById(teamId);
 
         if (!entity.getHumans().contains(humanId))
             throw new TeamNotFoundException();
@@ -81,19 +89,19 @@ public class TeamService {
     }
 
     private HumanDTO getHuman(Long id) {
-        return new HumanDTO(); //restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
+        return restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
     }
 
     private void removeAllDeletedHumans(Long teamId) {
-        TeamEntity entity = repo.findById(teamId).get();
-        // entity.setHumans(entity.getHumans().stream().filter(humanId -> {
-        //     try {
-        //         getHuman(humanId);
-        //         return true;
-        //     } catch (Exception e) {
-        //         return false;
-        //     }
-        // }).toList());
+        TeamEntity entity = repo.findById(teamId);
+        entity.setHumans(entity.getHumans().stream().filter(humanId -> {
+            try {
+                getHuman(humanId);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }).collect(Collectors.toList()));
         repo.save(entity);
     }
 }

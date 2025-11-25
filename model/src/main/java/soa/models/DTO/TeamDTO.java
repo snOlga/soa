@@ -1,4 +1,4 @@
-package teams.service.dto;
+package soa.models.DTO;
 
 import java.util.List;
 

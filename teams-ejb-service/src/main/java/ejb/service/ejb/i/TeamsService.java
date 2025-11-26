@@ -2,7 +2,7 @@ package ejb.service.ejb.i;
 
 import javax.ejb.Remote;
 
-import soa.models.DTO.TeamDTO;
+import ejb.service.DTO.TeamDTO;
 
 @Remote
 public interface TeamsService {

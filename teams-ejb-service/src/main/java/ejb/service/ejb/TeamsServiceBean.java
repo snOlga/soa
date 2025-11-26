@@ -1,15 +1,14 @@
 package ejb.service.ejb;
 
+import ejb.service.DTO.HumanDTO;
+import ejb.service.DTO.TeamDTO;
 import ejb.service.ejb.i.TeamsService;
+import ejb.service.entity.TeamEntity;
+import ejb.service.exception.HumanAlreadyInTeamException;
+import ejb.service.exception.HumanNotFoundException;
+import ejb.service.exception.TeamNotFoundException;
+import ejb.service.mapper.TeamMapper;
 import ejb.service.repository.TeamRepository;
-import soa.models.DTO.HumanDTO;
-import soa.models.DTO.TeamDTO;
-import soa.models.entity.TeamEntity;
-import soa.models.exception.HumanAlreadyInTeamException;
-import soa.models.exception.HumanNotFoundException;
-import soa.models.exception.TeamNotFoundException;
-import soa.models.mapper.TeamMapper;
-
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;

@@ -3,12 +3,12 @@ package humans.service.resourse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import humans.service.DTO.HumanDTO;
+import humans.service.enums.WeaponType;
+import humans.service.exception.IncorrectPageSizeException;
 import humans.service.service.HumanService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
-import soa.models.DTO.HumanDTO;
-import soa.models.enums.WeaponType;
-import soa.models.exception.IncorrectPageSizeException;
 
 @Component
 @Path("/humans")

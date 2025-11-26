@@ -5,19 +5,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.Path;
-
-import soa.models.DTO.HumanDTO;
-import soa.models.entity.HumanEntity;
-import soa.models.enums.WeaponType;
-import soa.models.exception.HumanNotFoundException;
-import soa.models.mapper.HumanMapper;
-import soa.models.repository.HumanRepository;
+import jakarta.persistence.criteria.Path;
+import humans.service.DTO.HumanDTO;
+import humans.service.entity.HumanEntity;
+import humans.service.enums.WeaponType;
+import humans.service.mapper.HumanMapper;
+import humans.service.repository.HumanRepository;
 
 @Service
 public class HumanService {
@@ -57,8 +56,7 @@ public class HumanService {
 
     private Specification<HumanEntity> buildQueryFilter(String filter) {
         if (filter.isBlank() || filter.isEmpty())
-            return Specification.where(null);
-
+            return Specification.unrestricted();
         Matcher matcher = CONDITION_PATTERN.matcher(filter);
         Specification<HumanEntity> spec = Specification.not(null);
         while (matcher.find()) {
@@ -83,13 +81,12 @@ public class HumanService {
                 currField = field.split("\\.")[1];
             }
             switch (operator) {
-                case "=":
-                case "==":
+                case "=", "==":
                     return builder.equal(path.get(currField), typedValue);
                 case "!=":
                     return builder.notEqual(path.get(currField), typedValue);
                 case ">":
-                    return builder.greaterThan(path.get(currField), (Comparable) typedValue);
+                    return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 case ">=":
                     return builder.greaterThanOrEqualTo(path.get(currField), (Comparable) typedValue);
                 case "<":
@@ -118,23 +115,21 @@ public class HumanService {
         }
     }
 
-    private Boolean parseBoolean(String value) throws Exception {
+    private Boolean parseBoolean(String value) throws ParseException {
         switch (value.toLowerCase()) {
-            case "t":
-            case "true":
+            case "t", "true":
                 return true;
-            case "f":
-            case "false":
+            case "f", "false":
                 return false;
             default:
-                throw new Exception("Cannot parse Boolean from string: " + value);
+                throw new ParseException("Cannot parse Boolean from string: " + value);
         }
     }
 
     public HumanDTO update(Long id, HumanDTO dto) {
         boolean isPresent = repo.findById(id).isPresent();
         if (!isPresent)
-            throw new HumanNotFoundException();
+            throw new NullPointerException();
         HumanEntity updated = mapper.toEntity(dto);
         updated.setId(id);
         repo.save(updated);
@@ -144,7 +139,7 @@ public class HumanService {
     public HumanDTO delete(Long id) {
         HumanEntity entity = repo.findById(id).orElse(null);
         if (entity == null)
-            throw new HumanNotFoundException();
+            throw new NullPointerException();
         entity.setIsDeleted(true);
         repo.save(entity);
         return mapper.toDTO(entity);

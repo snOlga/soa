@@ -4,7 +4,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import soa.models.entity.TeamEntity;
+import ejb.service.entity.TeamEntity;
 
 @Stateless
 public class TeamRepository {

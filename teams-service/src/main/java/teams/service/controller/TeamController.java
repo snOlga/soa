@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ejb.service.DTO.TeamDTO;
 import ejb.service.ejb.i.TeamsService;
-import soa.models.DTO.TeamDTO;
 
 @RestController
 @RequestMapping("/teams")

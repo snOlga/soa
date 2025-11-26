@@ -1,5 +1,7 @@
 package ejb.service.config;
 
+import java.net.URL;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -23,7 +25,7 @@ public class RestTemplateProducer {
 
     @Inject
     @ConfigProperty(name = "trust.store") // Reads from microprofile-config.properties or env vars
-    private Resource trustStore;
+    private String trustStore;
 
     @Inject
     @ConfigProperty(name = "trust.store.password")
@@ -32,7 +34,7 @@ public class RestTemplateProducer {
     @Produces
     public RestTemplate createRestTemplate() throws Exception {
         SSLContext sslContext = new SSLContextBuilder()
-                .loadTrustMaterial(trustStore.getURL(), trustStorePassword.toCharArray()).build();
+                .loadTrustMaterial(new URL(trustStore), trustStorePassword.toCharArray()).build();
         SSLConnectionSocketFactory sslConFactory = new SSLConnectionSocketFactory(sslContext);
         HttpClientConnectionManager cm = PoolingHttpClientConnectionManagerBuilder.create()
                 .setSSLSocketFactory(sslConFactory)

@@ -1,36 +1,23 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
-        
         {
-            // Name this configuration clearly
-            "name": "Launch Humans Service (Java 17)",
-            
-            // Specify the type as java and the request as launch
+            "type": "java",
+            "name": "SpringMainApplication",
+            "request": "launch",
+            "mainClass": "teams.service.SpringMainApplication",
+            "projectName": "teams"
+        },
+        {
+            "name": "Humans Service (Java 17)",
             "type": "java",
             "request": "launch",
-            
-            // Set the main class to your Spring Boot application class in humans-service
-            // Based on the provided source, this should be:
             "mainClass": "humans.service.JaxrsApplication",
-            
-            // IMPORTANT: Specify the module/project name for this launch configuration
-            // This ensures only the humans-service is targeted.
-            "projectName": "humans", 
-            
-            // CRUCIAL: Set the environment variable JAVA_HOME here
-            // This overrides the system's JAVA_HOME (Java 11) for this specific launch.
+            "projectName": "humans",
             "env": {
                 "JAVA_HOME": "C:\\Program Files\\Java\\jdk-17"
             },
-            
-            // Optional: If you need to debug with JDWP, you can include the arguments here:
-            // "vmArgs": "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
-            
-            // Optional: Set the working directory to the module directory
             "cwd": "${workspaceFolder}/humans-service"
         }
-        // ... other configurations for your model, teams-service, etc.
     ]
 }

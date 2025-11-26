@@ -6,7 +6,7 @@
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
 
     <persistence-unit name="TeamsPU" transaction-type="JTA">
-        <class>soa.models.entity.TeamEntity</class>
+        <class>ejb.service.entity.TeamEntity</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres"/>

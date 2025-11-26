@@ -30,6 +30,7 @@ public class TeamsServiceBean implements TeamsService {
 
     @Override
     public TeamDTO get(Long id) {
+        System.err.println("HIIIII");
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
         removeAllDeletedHumans(id);

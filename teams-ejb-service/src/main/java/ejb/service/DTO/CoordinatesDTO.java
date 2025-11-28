@@ -1,5 +1,7 @@
 package ejb.service.DTO;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.*;
 import lombok.*;
 
@@ -7,7 +9,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoordinatesDTO {
+public class CoordinatesDTO implements Serializable {
     
     private Long id;
 

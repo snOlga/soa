@@ -1,5 +1,6 @@
 package ejb.service.DTO;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.*;
@@ -9,7 +10,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HumanDTO {
+public class HumanDTO implements Serializable {
     
     private Long id;
 

@@ -33,8 +33,8 @@ public class TeamsServiceBean implements TeamsService {
         this.client = ClientBuilder.newClient();
     }
 
-    private String sendGetRequest() {
-        String targetUrl = "https://localhost:18018/humans";
+    private String sendGetRequest(Long id) {
+        String targetUrl = "https://localhost:18018/humans/" + id;
 
         try (Response response = client.target(targetUrl)
                 .request(MediaType.APPLICATION_JSON)
@@ -50,7 +50,6 @@ public class TeamsServiceBean implements TeamsService {
 
     @Override
     public TeamDTO get(Long id) {
-        System.err.println("HIIIII");
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
         removeAllDeletedHumans(id);
@@ -109,7 +108,7 @@ public class TeamsServiceBean implements TeamsService {
     }
 
     private HumanDTO getHuman(Long id) {
-        System.err.println();
+        System.err.println(sendGetRequest(id));
         return null;
     }
 

@@ -1,5 +1,6 @@
 package ejb.service.DTO;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -10,7 +11,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamDTO {
+public class TeamDTO implements Serializable {
     private Long id;
 
     @NotBlank

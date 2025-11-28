@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>service</groupId>
 			<artifactId>ejb</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -55,6 +55,23 @@
 			<groupId>org.wildfly</groupId>
 			<artifactId>wildfly-naming-client</artifactId>
 			<version>1.0.15.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>6.1.4.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.2.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.8</version>
 		</dependency>
 
 	</dependencies>

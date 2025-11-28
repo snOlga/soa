@@ -1,6 +1,0 @@
-<deployment>
-    <exclusions>
-        <module name="org.hibernate" />
-        <module name="org.hibernate.commons-annotations" />
-    </exclusions>
-</deployment>

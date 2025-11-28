@@ -11,22 +11,42 @@ import ejb.service.mapper.TeamMapper;
 import ejb.service.repository.TeamRepository;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.springframework.web.client.RestTemplate;
-
-@Stateless(name = "TeamsServiceBean")
+@Stateless(name = "TeamsService")
 public class TeamsServiceBean implements TeamsService {
 
     @Inject
     TeamRepository repo;
     TeamMapper mapper = new TeamMapper();
-    @Inject
-    RestTemplate restTemplate;
-    @ConfigProperty(name = "urls.human-service")
-    String humanServiceUrl;
+    private Client client;
+    String humanServiceUrl = "https://localhost:18018/humans";
+
+    @PostConstruct
+    public void init() {
+        this.client = ClientBuilder.newClient();
+    }
+
+    private String sendGetRequest() {
+        String targetUrl = "https://localhost:18018/humans";
+
+        try (Response response = client.target(targetUrl)
+                .request(MediaType.APPLICATION_JSON)
+                .get()) {
+
+            if (response.getStatus() == 200) {
+                return response.readEntity(String.class);
+            } else {
+                return "Error: " + response.getStatus();
+            }
+        }
+    }
 
     @Override
     public TeamDTO get(Long id) {
@@ -89,7 +109,8 @@ public class TeamsServiceBean implements TeamsService {
     }
 
     private HumanDTO getHuman(Long id) {
-        return restTemplate.getForObject(humanServiceUrl + "/" + id, HumanDTO.class);
+        System.err.println();
+        return null;
     }
 
     private void removeAllDeletedHumans(Long teamId) {

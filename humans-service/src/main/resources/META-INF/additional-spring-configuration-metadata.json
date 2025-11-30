@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "kafka.custom.topicname.is-human-present",
+    "type": "java.lang.String",
+    "description": "A description for 'kafka.custom.topicname.is-human-present'"
+  },
+  {
+    "name": "kafka.custom.topicname.is-human-present.res",
+    "type": "java.lang.String",
+    "description": "A description for 'kafka.custom.topicname.is-human-present.res'"
+  }
+]}

@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ejb.service.DTO.TeamDTO;
-import ejb.service.ejb.i.HelloStatelessWorld;
-import ejb.service.ejb.i.TeamsService;
+import ejb.service.service.i.TeamsService;
 
 @RestController
 @RequestMapping("/teams")
@@ -22,14 +21,6 @@ public class TeamController {
     
     @Autowired
     private TeamsService service;
-    @Autowired
-    private HelloStatelessWorld hello;
-
-    @CrossOrigin
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return new ResponseEntity<>(hello.getHelloWorld(), HttpStatus.OK);
-    }
 
     @CrossOrigin
     @GetMapping("/{id}")

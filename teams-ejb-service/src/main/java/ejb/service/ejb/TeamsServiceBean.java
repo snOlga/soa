@@ -9,9 +9,14 @@ import ejb.service.exception.HumanNotFoundException;
 import ejb.service.exception.TeamNotFoundException;
 import ejb.service.mapper.TeamMapper;
 import ejb.service.repository.TeamRepository;
+
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -25,26 +30,41 @@ public class TeamsServiceBean implements TeamsService {
     @Inject
     TeamRepository repo;
     TeamMapper mapper = new TeamMapper();
-    private Client client;
-    String humanServiceUrl = "https://localhost:18018/humans";
+    Client client = createUnsafeClient();
 
-    @PostConstruct
-    public void init() {
-        this.client = ClientBuilder.newClient();
+    private Client createUnsafeClient() {
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        } };
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new SecureRandom());
+
+        } catch (Exception ignore) {
+        }
+
+        return ClientBuilder.newBuilder()
+                .sslContext(sc)
+                .hostnameVerifier((hostname, session) -> true)
+                .build();
     }
 
-    private String sendGetRequest(Long id) {
+    private HumanDTO sendGetRequest(Long id) {
         String targetUrl = "https://host.docker.internal:18018/humans/" + id;
 
         try (Response response = client.target(targetUrl)
                 .request(MediaType.APPLICATION_JSON)
                 .get()) {
-
-            if (response.getStatus() == 200) {
-                return response.readEntity(String.class);
-            } else {
-                return "Error: " + response.getStatus();
-            }
+            return response.readEntity(HumanDTO.class);
         }
     }
 
@@ -63,6 +83,7 @@ public class TeamsServiceBean implements TeamsService {
                 throw new HumanNotFoundException();
         }
         TeamEntity entity = mapper.toEntity(dto);
+        entity.setIsDeleted(false);
         return mapper.toDTO(repo.save(entity));
     }
 
@@ -108,8 +129,7 @@ public class TeamsServiceBean implements TeamsService {
     }
 
     private HumanDTO getHuman(Long id) {
-        System.err.println(sendGetRequest(id));
-        return null;
+        return sendGetRequest(id);
     }
 
     private void removeAllDeletedHumans(Long teamId) {

@@ -34,7 +34,7 @@ public class TeamsServiceBean implements TeamsService {
     }
 
     private String sendGetRequest(Long id) {
-        String targetUrl = "https://localhost:18018/humans/" + id;
+        String targetUrl = "https://host.docker.internal:18018/humans/" + id;
 
         try (Response response = client.target(targetUrl)
                 .request(MediaType.APPLICATION_JSON)

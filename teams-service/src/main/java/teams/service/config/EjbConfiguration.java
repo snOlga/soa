@@ -1,9 +1,10 @@
 package teams.service.config;
 
+import ejb.service.ejb.i.HelloStatelessWorld;
+import ejb.service.ejb.i.TeamsService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import ejb.service.service.i.TeamsService;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -12,6 +13,20 @@ import java.util.Properties;
 
 @Configuration
 public class EjbConfiguration {
+
+    @Bean
+    public HelloStatelessWorld helloStatelessWorld() throws NamingException {
+        Properties jndiProps = new Properties();
+
+        jndiProps.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory");
+        jndiProps.put(Context.PROVIDER_URL, "http-remoting://localhost:8080");
+        jndiProps.put(Context.SECURITY_PRINCIPAL, "user");
+        jndiProps.put(Context.SECURITY_CREDENTIALS, "user");
+
+        Context context = new InitialContext(jndiProps);
+        String jndiName = "ejb:/ejb-0.0.2-SNAPSHOT/HelloStatelessWorld!ejb.service.ejb.i.HelloStatelessWorld";
+        return (HelloStatelessWorld) context.lookup(jndiName);
+    }
 
     @Bean
     public TeamsService teamsService() throws NamingException {
@@ -23,7 +38,7 @@ public class EjbConfiguration {
         jndiProps.put(Context.SECURITY_CREDENTIALS, "user");
 
         Context context = new InitialContext(jndiProps);
-        String jndiName = "ejb:/ejb-0.0.2-SNAPSHOT/TeamsService!ejb.service.service.i.TeamsService";
+        String jndiName = "ejb:/ejb-0.0.2-SNAPSHOT/TeamsService!ejb.service.ejb.i.TeamsService";
         return (TeamsService) context.lookup(jndiName);
     }
 }

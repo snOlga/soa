@@ -18,12 +18,9 @@ services:
       - DB_PASSWORD=1
     depends_on:
       - postgres
-      - kafka
-    volumes:
-      - D:\ITMO\4_year\soa\soa\wildfly-modules:/opt/jboss/wildfly/modules/org/apache/kafka/main
     command: >
       /bin/bash -c "
-      /opt/jboss/wildfly/bin/add-user.sh admin admin --silent &&
+      /opt/jboss/wildfly/bin/add-user.sh admin admin --silent && 
       /opt/jboss/wildfly/bin/add-user.sh user user -a --silent &&
       /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
       "
@@ -39,32 +36,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
-    hostname: kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://localhost:9092 
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 volumes:
   postgres_data:

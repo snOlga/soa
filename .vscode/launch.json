@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Application",
+            "request": "launch",
+            "mainClass": "ejb.service.Application",
+            "projectName": "ejb"
+        },
+        {
+            "type": "java",
             "name": "SpringMainApplication",
             "request": "launch",
             "mainClass": "teams.service.SpringMainApplication",

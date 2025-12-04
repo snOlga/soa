@@ -16,4 +16,5 @@ public interface TeamsService {
 
     public TeamDTO deleteMember(Long teamId, Long humanId);
 
+    public void deleteMember(Long humanId);
 }

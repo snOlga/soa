@@ -7,8 +7,10 @@ import java.util.regex.Pattern;
 
 import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.Path;
@@ -25,6 +27,10 @@ public class HumanService {
     HumanRepository repo;
     @Autowired
     HumanMapper mapper;
+    @Autowired
+    private KafkaTemplate<String, Long> kafkaTemplate;
+    @Value(value = "${kafka.custom.topicname.deletedHumanId}")
+    private String topicName;
 
     public HumanDTO save(HumanDTO dto) {
         HumanEntity entity = mapper.toEntity(dto);
@@ -138,27 +144,47 @@ public class HumanService {
 
     public HumanDTO delete(Long id) {
         HumanEntity entity = repo.findById(id).orElse(null);
-        if (entity == null)
-            throw new NullPointerException();
-        entity.setIsDeleted(true);
-        repo.save(entity);
-        return mapper.toDTO(entity);
+        return delete(entity);
     }
 
     public HumanDTO deleteByWeaponType(WeaponType type) {
         HumanEntity entity = repo.findByWeaponType(type, PageRequest.of(0, 1)).toList().get(0);
+        return delete(entity);
+    }
+
+    private HumanDTO delete(HumanEntity entity) {
         if (entity == null)
-            return null;
+            throw new NullPointerException();
         entity.setIsDeleted(true);
         repo.save(entity);
+        kafkaTemplate.send(topicName, entity.getId());
         return mapper.toDTO(entity);
+
     }
 
     public void deleteAllByWeaponType(WeaponType type) {
+        int page = 0;
+        while (true) {
+            List<HumanEntity> humansToDelete = repo.findByWeaponType(type, PageRequest.of(page, 100)).toList();
+            if (humansToDelete.isEmpty())
+                break;
+            for (HumanEntity humanEntity : humansToDelete) 
+                kafkaTemplate.send(topicName, humanEntity.getId());
+            page++;
+        }
         repo.deleteAllByWeaponType(type);
     }
 
     public void deleteAllByLessCoolCar(Integer coolness) {
+        int page = 0;
+        while (true) {
+            List<HumanEntity> humansToDelete = repo.findByCar_CoolnessLessThan(coolness, PageRequest.of(page, 100)).toList();
+            if (humansToDelete.isEmpty())
+                break;
+            for (HumanEntity humanEntity : humansToDelete) 
+                kafkaTemplate.send(topicName, humanEntity.getId());
+            page++;
+        }
         repo.deleteAllByLessCoolCar(coolness);
     }
 }

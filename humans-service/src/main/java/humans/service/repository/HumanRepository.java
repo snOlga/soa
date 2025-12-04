@@ -16,14 +16,16 @@ import humans.service.enums.WeaponType;
 public interface HumanRepository extends JpaRepository<HumanEntity, Long>, JpaSpecificationExecutor<HumanEntity> {
 
     @Transactional
-    @Modifying 
+    @Modifying
     @Query("update HumanEntity h set h.isDeleted = true where h.weaponType = ?1")
     public void deleteAllByWeaponType(WeaponType weaponType);
 
     public Page<HumanEntity> findByWeaponType(WeaponType weaponType, Pageable pageable);
 
     @Transactional
-    @Modifying 
+    @Modifying
     @Query("update HumanEntity h set h.isDeleted = true where h.car.coolness < ?1")
     public void deleteAllByLessCoolCar(Integer lessCoolness);
+
+    public Page<HumanEntity> findByCar_CoolnessLessThan(Integer coolness, Pageable pageable);
 }

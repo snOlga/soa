@@ -3,6 +3,7 @@ package teams.service.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import ejb.service.ejb.i.TeamsService;
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
-    
+
     @Autowired
     private TeamsService service;
 
@@ -50,5 +51,12 @@ public class TeamController {
     @DeleteMapping("/{teamId}/members/{humanId}")
     public ResponseEntity<TeamDTO> deleteMember(@PathVariable Long teamId, @PathVariable Long humanId) {
         return new ResponseEntity<>(service.deleteMember(teamId, humanId), HttpStatus.OK);
+    }
+
+    @KafkaListener(topics = "${kafka.custom.topicname.deletedHumanId}")
+    public void deleteMember(Long humanId) {
+        System.err.println("HERE");
+        
+        service.deleteMember(humanId);
     }
 }

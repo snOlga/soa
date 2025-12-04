@@ -1,5 +1,7 @@
 package ejb.service.repository;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,4 +25,22 @@ public class TeamRepository {
     public boolean existsById(Long id) {
         return em.find(TeamEntity.class, id) != null;
     }
+
+    public void deleteMember(Long humanId) {
+        System.err.println("HERE1");
+        List<TeamEntity> teams = em.createNativeQuery(
+                "SELECT * FROM teams t " +
+                        "WHERE t.humans REGEXP '(^|,)' || ? || '(,|$)'",
+                TeamEntity.class)
+                .setParameter(1, humanId.toString())
+                .getResultList();
+
+        System.err.println("HERE2");
+        for (TeamEntity t : teams) {
+            System.err.println("HERE3");
+            t.getHumans().remove(humanId);
+            em.merge(t);
+        }
+    }
+
 }

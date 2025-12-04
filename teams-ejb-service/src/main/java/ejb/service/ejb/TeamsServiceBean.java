@@ -15,7 +15,6 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -72,7 +71,6 @@ public class TeamsServiceBean implements TeamsService {
     public TeamDTO get(Long id) {
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
-        removeAllDeletedHumans(id);
         return mapper.toDTO(repo.findById(id));
     }
 
@@ -98,8 +96,8 @@ public class TeamsServiceBean implements TeamsService {
 
     @Override
     public TeamDTO add(Long teamId, Long humanId) {
-        checkTeamAndHuman(teamId, humanId);
-        removeAllDeletedHumans(teamId);
+        if (!repo.existsById(teamId))
+            throw new TeamNotFoundException();
         TeamEntity entity = repo.findById(teamId);
 
         if (entity.getHumans().contains(humanId))
@@ -110,8 +108,8 @@ public class TeamsServiceBean implements TeamsService {
 
     @Override
     public TeamDTO deleteMember(Long teamId, Long humanId) {
-        checkTeamAndHuman(teamId, humanId);
-        removeAllDeletedHumans(teamId);
+        if (!repo.existsById(teamId))
+            throw new TeamNotFoundException();
         TeamEntity entity = repo.findById(teamId);
 
         if (!entity.getHumans().contains(humanId))
@@ -120,28 +118,12 @@ public class TeamsServiceBean implements TeamsService {
         return mapper.toDTO(repo.save(entity));
     }
 
-    private void checkTeamAndHuman(Long teamId, Long humanId) {
-        if (!repo.existsById(teamId))
-            throw new TeamNotFoundException();
-        HumanDTO a = getHuman(humanId);
-        if (a == null)
-            throw new HumanNotFoundException();
+    @Override
+    public void deleteMember(Long humanId) {
+        repo.deleteMember(humanId);
     }
 
     private HumanDTO getHuman(Long id) {
         return sendGetRequest(id);
-    }
-
-    private void removeAllDeletedHumans(Long teamId) {
-        TeamEntity entity = repo.findById(teamId);
-        entity.setHumans(entity.getHumans().stream().filter(humanId -> {
-            try {
-                getHuman(humanId);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }).collect(Collectors.toList()));
-        repo.save(entity);
     }
 }

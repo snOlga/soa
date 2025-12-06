@@ -32,6 +32,7 @@ public class TeamController {
     @CrossOrigin
     @PostMapping
     public ResponseEntity<TeamDTO> create(@RequestBody TeamDTO dto) {
+        System.out.println("here");
         return new ResponseEntity<>(service.create(dto), HttpStatus.OK);
     }
 

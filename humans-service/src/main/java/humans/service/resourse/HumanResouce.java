@@ -21,6 +21,7 @@ public class HumanResouce {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(HumanDTO dto) {
+        System.out.println("here");
         return Response.ok().entity(humanService.save(dto)).build();
     }
 

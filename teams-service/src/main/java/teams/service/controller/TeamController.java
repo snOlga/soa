@@ -54,9 +54,7 @@ public class TeamController {
     }
 
     @KafkaListener(topics = "${kafka.custom.topicname.deletedHumanId}")
-    public void deleteMember(Long humanId) {
-        System.err.println("HERE");
-        
+    public void deleteMember(Long humanId) {        
         service.deleteMember(humanId);
     }
 }

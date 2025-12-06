@@ -27,7 +27,6 @@ public class TeamRepository {
     }
 
     public void deleteMember(Long humanId) {
-        System.err.println("HERE1");
         List<TeamEntity> teams = em.createNativeQuery(
                 "SELECT * FROM teams t " +
                         "WHERE t.humans REGEXP '(^|,)' || ? || '(,|$)'",
@@ -35,9 +34,7 @@ public class TeamRepository {
                 .setParameter(1, humanId.toString())
                 .getResultList();
 
-        System.err.println("HERE2");
         for (TeamEntity t : teams) {
-            System.err.println("HERE3");
             t.getHumans().remove(humanId);
             em.merge(t);
         }

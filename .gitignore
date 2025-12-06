@@ -2,3 +2,5 @@ teams-service/target/
 humans-service/target/
 model/target/
 teams-ejb-service/target/
+humans-c-sharp/obj
+humans-c-sharp/bin

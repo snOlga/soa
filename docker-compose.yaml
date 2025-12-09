@@ -34,6 +34,7 @@ services:
       - "5433:5432"
 
   zookeeper:
+    container_name: zookeeper
     image: confluentinc/cp-zookeeper:7.7.7
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -42,6 +43,7 @@ services:
       - 22181:2181
 
   kafka:
+    container_name: kafka
     image: confluentinc/cp-kafka:7.7.7
     depends_on:
       - zookeeper
@@ -55,6 +57,16 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  consul:
+    image: hashicorp/consul:latest
+    container_name: consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: "agent -server -bootstrap-expect=1 -ui -client=0.0.0.0"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   haproxy:
     image: haproxy:2.9
     container_name: haproxy
@@ -62,9 +74,11 @@ services:
       - "8088:8088"
       - "9081:9081"
       - "9018:9018"
+      - "8404:8404"
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       - wildfly
+      - consul

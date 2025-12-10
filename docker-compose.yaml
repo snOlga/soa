@@ -1,6 +1,70 @@
 version: "3.8"
 
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
 services:
+  humans-1:
+    image: humans-service
+    command:
+      - "-Dspring-boot.run.arguments=--server.port=18018"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      - wildfly
+      - consul
+      - postgres
+      - zookeeper
+      - kafka
+      - haproxy
+  humans-2:
+    image: humans-service
+    command:
+      - "-Dspring-boot.run.arguments=--server.port=18019"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.11
+    depends_on:
+      - wildfly
+      - consul
+      - postgres
+      - zookeeper
+      - kafka
+      - haproxy
+  teams-1:
+    image: teams-service
+    command:
+      - "-Dspring-boot.run.arguments=--server.port=18081"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.12
+    depends_on:
+      - wildfly
+      - consul
+      - postgres
+      - zookeeper
+      - kafka
+      - haproxy
+  teams-2:
+    image: teams-service
+    command:
+      - "-Dspring-boot.run.arguments=--server.port=18082"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.13
+    depends_on:
+      - wildfly
+      - consul
+      - postgres
+      - zookeeper
+      - kafka
+      - haproxy
+
   wildfly:
     image: jboss/wildfly:latest
     container_name: wildfly
@@ -22,6 +86,9 @@ services:
       /opt/jboss/wildfly/bin/add-user.sh user user -a --silent &&
       /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
       "
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.14
 
   postgres:
     image: postgres:latest
@@ -32,6 +99,9 @@ services:
       - POSTGRES_DB=postgres
     ports:
       - "5433:5432"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.15
 
   zookeeper:
     container_name: zookeeper
@@ -41,6 +111,9 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.16
 
   kafka:
     container_name: kafka
@@ -56,6 +129,9 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.17
 
   consul:
     image: hashicorp/consul:latest
@@ -66,9 +142,12 @@ services:
     command: "agent -server -bootstrap-expect=1 -ui -client=0.0.0.0"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.18
 
   haproxy:
-    image: haproxy:2.9
+    image: haproxy:3.0
     container_name: haproxy
     ports:
       - "8088:8088"
@@ -82,3 +161,6 @@ services:
     depends_on:
       - wildfly
       - consul
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.19

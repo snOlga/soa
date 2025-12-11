@@ -50,7 +50,7 @@ function CreateHuman() {
         console.log(dataToSend)
 
         try {
-            const response = await fetch("https://localhost:9018/humans", {
+            const response = await fetch("http://localhost:9018/humans", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dataToSend),

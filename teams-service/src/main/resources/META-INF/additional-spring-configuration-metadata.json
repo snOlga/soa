@@ -28,5 +28,10 @@
     "name": "wildfly",
     "type": "java.lang.String",
     "description": "A description for 'wildfly'"
+  },
+  {
+    "name": "consul",
+    "type": "java.lang.String",
+    "description": "A description for 'consul'"
   }
 ]}

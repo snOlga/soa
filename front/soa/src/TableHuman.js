@@ -155,9 +155,9 @@ function TableHuman() {
         const sortingLine = sortingList.join(";");
         const filterLine = buildFilterLine();
 
-        console.log(`https://localhost:9018/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`)
+        console.log(`http://localhost:9018/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`)
 
-        fetch(`https://localhost:9018/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`, {
+        fetch(`http://localhost:9018/humans?from=${page}&page-size=${pageSize}&filter=${encodeURIComponent(filterLine)}&sort-by=${sortingLine}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         })
@@ -166,14 +166,14 @@ function TableHuman() {
     }
 
     const remove = (humanId) => {
-        fetch("https://localhost:9018/humans/" + humanId, {
+        fetch("http://localhost:9018/humans/" + humanId, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         })
     }
 
     const update = () => {
-        fetch("https://localhost:9018/humans/" + editingHuman.id, {
+        fetch("http://localhost:9018/humans/" + editingHuman.id, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(editingHuman),

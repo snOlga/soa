@@ -12,14 +12,14 @@ function TableTeam() {
     const [searchId, setSearchId] = useState(0)
 
     const remove = (teamId) => {
-        fetch("https://localhost:9081/teams/" + teamId, {
+        fetch("http://localhost:9081/teams/" + teamId, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         })
     }
 
     const update = () => {
-        fetch("https://localhost:9081/teams/" + editingTeam.id, {
+        fetch("http://localhost:9081/teams/" + editingTeam.id, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
@@ -27,7 +27,7 @@ function TableTeam() {
     }
 
     const find = () => {
-        fetch("https://localhost:9081/teams/" + searchId, {
+        fetch("http://localhost:9081/teams/" + searchId, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
         }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
@@ -39,7 +39,7 @@ function TableTeam() {
     };
 
     const addHuman = (humanId) => {
-        fetch("https://localhost:9081/teams/" + editingTeam.id + "/members/" + humanId, {
+        fetch("http://localhost:9081/teams/" + editingTeam.id + "/members/" + humanId, {
             method: "POST",
             headers: { "Content-Type": "application/json" }
         }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)
@@ -50,7 +50,7 @@ function TableTeam() {
     }
 
     const removeHuman = (humanId) => {
-        fetch("https://localhost:9018/teams/" + editingTeam.id + "/members/" + humanId, {
+        fetch("http://localhost:9018/teams/" + editingTeam.id + "/members/" + humanId, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" }
         }).then(resp => resp.json()).then(res => res.id != null ? setTeams([res]) : null)

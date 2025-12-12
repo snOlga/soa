@@ -10,8 +10,6 @@ networks:
 services:
   humans-1:
     image: humans-service
-    command:
-      - "-Dspring-boot.run.arguments=--server.port=18018 --server.address=172.20.0.10"
     networks:
       app_net:
         ipv4_address: 172.20.0.10
@@ -26,8 +24,6 @@ services:
       - ./utils/humans-1:/app/config
   humans-2:
     image: humans-service
-    command:
-      - "-Dspring-boot.run.arguments=--server.port=18019 --server.address=172.20.0.11"
     networks:
       app_net:
         ipv4_address: 172.20.0.11
@@ -42,8 +38,6 @@ services:
       - ./utils/humans-2:/app/config
   teams-1:
     image: teams-service
-    command:
-      - "-Dspring-boot.run.arguments=--server.port=18081 --server.address=172.20.0.12"
     networks:
       app_net:
         ipv4_address: 172.20.0.12
@@ -58,8 +52,6 @@ services:
       - ./utils/teams-1:/app/config
   teams-2:
     image: teams-service
-    command:
-      - "-Dspring-boot.run.arguments=--server.port=18082 --server.address=172.20.0.13"
     networks:
       app_net:
         ipv4_address: 172.20.0.13

@@ -9,24 +9,38 @@ import ejb.service.exception.HumanNotFoundException;
 import ejb.service.exception.TeamNotFoundException;
 import ejb.service.mapper.TeamMapper;
 import ejb.service.repository.TeamRepository;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.List;
+
+import javax.naming.spi.ObjectFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.jvnet.hk2.annotations.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Stateless(name = "TeamsService")
+@Service
+@WebService(serviceName = "TeamsService", portName = "TeamsServicePort", name = "TeamsService", targetNamespace = "http://my.service/", endpointInterface = "ejb.service.ejb.i.TeamsService")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@XmlSeeAlso({
+        ObjectFactory.class
+})
 public class TeamsServiceBean implements TeamsService {
 
-    @Inject
+    @Autowired
     TeamRepository repo;
     TeamMapper mapper = new TeamMapper();
     Client client = createUnsafeClient();
@@ -67,15 +81,23 @@ public class TeamsServiceBean implements TeamsService {
         }
     }
 
+    @WebMethod(operationName = "getTeam")
+    @WebResult(name = "team")
     @Override
-    public TeamDTO get(Long id) {
+    public TeamDTO get(
+        @WebParam(name = "id") Long id
+    ) {
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
-        return mapper.toDTO(repo.findById(id));
+        return mapper.toDTO(repo.findById(id).get());
     }
 
+    @WebMethod(operationName = "createTeam")
+    @WebResult(name = "team")
     @Override
-    public TeamDTO create(TeamDTO dto) {
+    public TeamDTO create(
+        @WebParam(name = "team") TeamDTO dto
+    ) {
         for (Long humanId : dto.getHumans()) {
             if (getHuman(humanId) == null)
                 throw new HumanNotFoundException();
@@ -85,20 +107,29 @@ public class TeamsServiceBean implements TeamsService {
         return mapper.toDTO(repo.save(entity));
     }
 
+    @WebMethod(operationName = "deleteTeam")
+    @WebResult(name = "team")
     @Override
-    public TeamDTO delete(Long id) {
+    public TeamDTO delete(
+        @WebParam(name = "id") Long id
+    ) {
         if (!repo.existsById(id))
             throw new TeamNotFoundException();
-        TeamEntity entity = repo.findById(id);
+        TeamEntity entity = repo.findById(id).get();
         entity.setIsDeleted(true);
         return mapper.toDTO(repo.save(entity));
     }
 
+    @WebMethod(operationName = "addMember")
+    @WebResult(name = "team")
     @Override
-    public TeamDTO add(Long teamId, Long humanId) {
+    public TeamDTO add(
+        @WebParam(name = "teamId") Long teamId, 
+        @WebParam(name = "humanId") Long humanId
+    ) {
         if (!repo.existsById(teamId))
             throw new TeamNotFoundException();
-        TeamEntity entity = repo.findById(teamId);
+        TeamEntity entity = repo.findById(teamId).get();
 
         if (entity.getHumans().contains(humanId))
             throw new HumanAlreadyInTeamException();
@@ -106,11 +137,16 @@ public class TeamsServiceBean implements TeamsService {
         return mapper.toDTO(repo.save(entity));
     }
 
+    @WebMethod(operationName = "removeMemberFromTeam")
+    @WebResult(name = "team")
     @Override
-    public TeamDTO deleteMember(Long teamId, Long humanId) {
+    public TeamDTO deleteMember(
+        @WebParam(name = "teamId") Long teamId, 
+        @WebParam(name = "humanId") Long humanId
+    ) {
         if (!repo.existsById(teamId))
             throw new TeamNotFoundException();
-        TeamEntity entity = repo.findById(teamId);
+        TeamEntity entity = repo.findById(teamId).get();
 
         if (!entity.getHumans().contains(humanId))
             throw new TeamNotFoundException();
@@ -118,9 +154,18 @@ public class TeamsServiceBean implements TeamsService {
         return mapper.toDTO(repo.save(entity));
     }
 
+    @WebMethod(operationName = "deleteMemberByHumanId")
     @Override
-    public void deleteMember(Long humanId) {
-        repo.deleteMember(humanId);
+    public void deleteMemberByHumanId(
+        @WebParam(name = "humanId") Long humanId
+    ) {
+        List<TeamEntity> teams = repo.findTeamsContainingHuman(humanId);
+        for (TeamEntity team : teams) {
+            if (team.getHumans().contains(humanId)) {
+                team.getHumans().remove(humanId);
+                repo.save(team);
+            }
+        }
     }
 
     private HumanDTO getHuman(Long id) {

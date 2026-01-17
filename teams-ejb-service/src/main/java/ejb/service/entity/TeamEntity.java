@@ -6,9 +6,9 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
 
 import ejb.service.mapper.HumansIdsMapper;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter

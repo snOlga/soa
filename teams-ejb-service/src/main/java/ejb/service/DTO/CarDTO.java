@@ -2,7 +2,7 @@ package ejb.service.DTO;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Setter

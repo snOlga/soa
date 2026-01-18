@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class MuleEsbTeamsService implements TeamsService {
 
-    @Value("${muleesb.url:http://host.docker.internal:8081}")
+    @Value("${muleesb.url:http://localhost:8081}")
     private String muleEsbUrl;
 
     private final RestTemplate restTemplate;
@@ -25,7 +25,7 @@ public class MuleEsbTeamsService implements TeamsService {
     }
 
     @Override
-    public TeamDTO get(Long id) {
+    public TeamDTO getTeam(Long id) {
         try {
             String url = muleEsbUrl + "/teams/" + id;
             ResponseEntity<TeamDTO> response = restTemplate.exchange(
@@ -41,7 +41,7 @@ public class MuleEsbTeamsService implements TeamsService {
     }
 
     @Override
-    public TeamDTO create(TeamDTO dto) {
+    public TeamDTO createTeam(TeamDTO dto) {
         try {
             String url = muleEsbUrl + "/teams";
             ResponseEntity<TeamDTO> response = restTemplate.exchange(
@@ -57,7 +57,7 @@ public class MuleEsbTeamsService implements TeamsService {
     }
 
     @Override
-    public TeamDTO delete(Long id) {
+    public TeamDTO deleteTeam(Long id) {
         try {
             String url = muleEsbUrl + "/teams/" + id;
             ResponseEntity<TeamDTO> response = restTemplate.exchange(
@@ -73,7 +73,7 @@ public class MuleEsbTeamsService implements TeamsService {
     }
 
     @Override
-    public TeamDTO add(Long teamId, Long humanId) {
+    public TeamDTO addMember(Long teamId, Long humanId) {
         try {
             String url = muleEsbUrl + "/teams/" + teamId + "/members/" + humanId;
             ResponseEntity<TeamDTO> response = restTemplate.exchange(
@@ -89,7 +89,7 @@ public class MuleEsbTeamsService implements TeamsService {
     }
 
     @Override
-    public TeamDTO deleteMember(Long teamId, Long humanId) {
+    public TeamDTO removeMemberFromTeam(Long teamId, Long humanId) {
         try {
             String url = muleEsbUrl + "/teams/" + teamId + "/members/" + humanId;
             ResponseEntity<TeamDTO> response = restTemplate.exchange(

@@ -106,6 +106,19 @@ services:
       app_net:
         ipv4_address: 172.20.0.15
 
+  postgres-teams:
+    image: postgres:latest
+    container_name: postgres-teams
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=postgres
+    ports:
+      - "5434:5432"
+    networks:
+      app_net:
+        ipv4_address: 172.20.0.25
+
   zookeeper:
     container_name: zookeeper
     image: confluentinc/cp-zookeeper:7.7.7

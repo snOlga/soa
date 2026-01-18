@@ -14,43 +14,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ejb.service.DTO.TeamDTO;
-import ejb.service.ejb.i.TeamsService;
+import teams.service.client.MuleEsbTeamsService;
 
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
 
     @Autowired
-    private TeamsService service;
+    private MuleEsbTeamsService service;
 
     @CrossOrigin
     @GetMapping("/{id}")
-    public ResponseEntity<TeamDTO> get(@PathVariable Long id) {
-        return new ResponseEntity<>(service.get(id), HttpStatus.OK);
+    public ResponseEntity<TeamDTO> get(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(service.getTeam(id), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping
     public ResponseEntity<TeamDTO> create(@RequestBody TeamDTO dto) {
-        return new ResponseEntity<>(service.create(dto), HttpStatus.OK);
+        return new ResponseEntity<>(service.createTeam(dto), HttpStatus.OK);
     }
 
     @CrossOrigin
     @DeleteMapping("/{id}")
-    public ResponseEntity<TeamDTO> deleteTeam(@PathVariable Long id) {
-        return new ResponseEntity<>(service.delete(id), HttpStatus.OK);
+    public ResponseEntity<TeamDTO> deleteTeam(@PathVariable(name = "id") Long id) {
+        return new ResponseEntity<>(service.deleteTeam(id), HttpStatus.OK);
     }
 
     @CrossOrigin
     @PostMapping("/{teamId}/members/{humanId}")
-    public ResponseEntity<TeamDTO> add(@PathVariable Long teamId, @PathVariable Long humanId) {
-        return new ResponseEntity<>(service.add(teamId, humanId), HttpStatus.OK);
+    public ResponseEntity<TeamDTO> add(@PathVariable(name = "teamId") Long teamId, @PathVariable(name = "humanId") Long humanId) {
+        return new ResponseEntity<>(service.addMember(teamId, humanId), HttpStatus.OK);
     }
 
     @CrossOrigin
     @DeleteMapping("/{teamId}/members/{humanId}")
-    public ResponseEntity<TeamDTO> deleteMember(@PathVariable Long teamId, @PathVariable Long humanId) {
-        return new ResponseEntity<>(service.deleteMember(teamId, humanId), HttpStatus.OK);
+    public ResponseEntity<TeamDTO> deleteMember(@PathVariable(name = "teamId") Long teamId, @PathVariable(name = "humanId") Long humanId) {
+        return new ResponseEntity<>(service.removeMemberFromTeam(teamId, humanId), HttpStatus.OK);
     }
 
     @KafkaListener(topics = "${kafka.custom.topicname.deletedHumanId}")

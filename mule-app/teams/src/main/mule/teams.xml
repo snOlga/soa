@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+                        http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+                        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <http:listener-config name="HTTP_Listener_config">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+
+    <wsc:config name="Web_Service_Consumer_Config">
+        <wsc:connection
+            wsdlLocation="teams.wsdl"
+            service="TeamsService"
+            port="TeamsServicePort"
+            address="http://localhost:18090/wsdl" />
+    </wsc:config>
+
+    <flow name="createTeamFlow">
+        <http:listener config-ref="HTTP_Listener_config" path="/teams" allowedMethods="POST" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://i.ejb.service.ejb/
+---
+{
+    ns0#createTeam: {
+        ns0#team: {
+            name: payload.name,
+            (payload.humans default [] map ((id) -> {
+                humans: id as Number
+            }))
+        }
+    }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="DEBUG" message="#[payload]" category="DEBUG_PAYLOAD" />
+        <wsc:consume config-ref="Web_Service_Consumer_Config" operation="createTeam" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://i.ejb.service.ejb/
+---
+payload.body.ns0#createTeamResponse.team]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <flow name="getTeamFlow">
+        <http:listener config-ref="HTTP_Listener_config" path="/teams/{id}" allowedMethods="GET" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://i.ejb.service.ejb/
+---
+{
+    ns0#getTeam: {
+        id: attributes.uriParams.id as Number
+    }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <wsc:consume config-ref="Web_Service_Consumer_Config" operation="getTeam" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://i.ejb.service.ejb/
+---
+payload.body.ns0#getTeamResponse.team]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <flow name="deleteTeamFlow">
+        <http:listener config-ref="HTTP_Listener_config" path="/teams/{id}" allowedMethods="DELETE" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://i.ejb.service.ejb/
+---
+{
+    ns0#deleteTeam: {
+        id: attributes.uriParams.id as Number
+    }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <wsc:consume config-ref="Web_Service_Consumer_Config" operation="deleteTeam" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://i.ejb.service.ejb/
+---
+payload.body.ns0#deleteTeamResponse.team]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+</mule>

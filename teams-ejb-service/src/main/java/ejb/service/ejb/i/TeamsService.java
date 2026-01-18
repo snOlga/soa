@@ -7,19 +7,19 @@ import jakarta.jws.WebService;
 @WebService
 public interface TeamsService {
     @WebMethod
-    public TeamDTO get(Long id);
+    public TeamDTO getTeam(Long id);
 
     @WebMethod
-    public TeamDTO create(TeamDTO dto);
+    public TeamDTO createTeam(TeamDTO dto);
 
     @WebMethod
-    public TeamDTO delete(Long id);
+    public TeamDTO deleteTeam(Long id);
 
     @WebMethod
-    public TeamDTO add(Long teamId, Long humanId);
+    public TeamDTO addMember(Long teamId, Long humanId);
 
     @WebMethod
-    public TeamDTO deleteMember(Long teamId, Long humanId);
+    public TeamDTO removeMemberFromTeam(Long teamId, Long humanId);
 
     @WebMethod
     public void deleteMemberByHumanId(Long humanId);

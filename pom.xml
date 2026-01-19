@@ -14,7 +14,6 @@
         <module>teams-service</module>
         <module>humans-service</module>
 		<module>teams-ejb-service</module>
-		<module>teams</module>
     </modules>
 
 </project>

@@ -13,7 +13,7 @@ public class JerseyConfig extends ResourceConfig {
 
     public JerseyConfig() {
         Endpoint.publish(
-                "http://localhost:18090/wsdl",
+                "http://172.20.0.12:18090/wsdl",
                 new TeamsServiceBean());
     }
 }

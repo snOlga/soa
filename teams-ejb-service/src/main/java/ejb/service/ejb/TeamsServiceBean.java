@@ -59,7 +59,7 @@ public class TeamsServiceBean implements TeamsService {
     }
 
     private HumanDTO sendGetRequest(Long id) {
-        String targetUrl = "http://localhost:9018/humans/" + id;
+        String targetUrl = "http://172.20.0.19:9018/humans/" + id;
 
         try (Response response = client.target(targetUrl)
                 .request(MediaType.APPLICATION_JSON)

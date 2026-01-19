@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class MuleEsbTeamsService implements TeamsService {
 
-    @Value("${muleesb.url:http://localhost:8081}")
+    @Value("${muleesb.url:http://host.docker.internal:8081}")
     private String muleEsbUrl;
 
     private final RestTemplate restTemplate;

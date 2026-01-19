@@ -1,3 +1,3 @@
-start PowerShell -NoExit -Command "mvn clean package -DskipTests -pl teams-service; docker build -t teams-rest ./teams-service"
-start mvn clean package -DskipTests -pl teams-ejb-service; docker build -t teams-soap ./teams-ejb-service
-start PowerShell -NoExit -Command "${env:JAVA_HOME}='C:\Program Files\Java\jdk-17'; mvn clean package -DskipTests -pl humans-service; docker build -t humans-service ./humans-service
+start PowerShell -NoExit -Command "cd ./teams-ejb-service; mvn clean install -DskipTests; docker build -t teams-soap ."
+start PowerShell -NoExit -Command "cd ./teams-service; sleep 10; mvn clean package -DskipTests; docker build -t teams-rest ."
+start PowerShell -NoExit -Command "cd ./humans-service; mvn clean package -DskipTests; docker build -t humans-service ."

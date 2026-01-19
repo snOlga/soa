@@ -23,6 +23,9 @@
 
     <flow name="createTeamFlow">
         <http:listener config-ref="HTTP_Listener_config" path="/teams" allowedMethods="POST" />
+        <logger level="INFO" message="=== INCOMING REQUEST ===" />
+        <logger level="INFO" message="Payload type: #[typeOf(payload)]" />
+        <logger level="INFO" message="Payload: #[payload]" />
         <ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -30,18 +33,20 @@ output application/xml
 ns ns0 http://i.ejb.service.ejb/
 ---
 {
-    ns0#createTeam: {
-        ns0#team: {
-            name: payload.name,
-            (payload.humans default [] map ((id) -> {
-                humans: id as Number
-            }))
-        }
+  ns0#createTeam: {
+    ns0#team: {
+      ns0#id: payload.id,
+      ns0#name: payload.name,
+      ns0#humans: {
+        ns0#item: payload.humans
+      }
     }
+  }
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
-        <logger level="DEBUG" message="#[payload]" category="DEBUG_PAYLOAD" />
+        <logger level="INFO" message="=== TRANSFORMED XML ===" />
+        <logger level="INFO" message="XML: #[write(payload, 'application/xml')]" />
         <wsc:consume config-ref="Web_Service_Consumer_Config" operation="createTeam" />
         <ee:transform>
             <ee:message>

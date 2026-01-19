@@ -2,6 +2,7 @@ package ejb.service.ejb;
 
 import ejb.service.DTO.HumanDTO;
 import ejb.service.DTO.TeamDTO;
+import ejb.service.config.SpringToJerseyConfig;
 import ejb.service.ejb.i.TeamsService;
 import ejb.service.entity.TeamEntity;
 import ejb.service.exception.HumanAlreadyInTeamException;
@@ -13,18 +14,15 @@ import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
 import jakarta.jws.WebService;
-import jakarta.jws.soap.SOAPBinding;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import javax.naming.spi.ObjectFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -32,11 +30,7 @@ import javax.net.ssl.X509TrustManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@WebService(serviceName = "TeamsService", portName = "TeamsServicePort", name = "TeamsService", targetNamespace = "http://localhost/", endpointInterface = "ejb.service.ejb.i.TeamsService")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-@XmlSeeAlso({
-        ObjectFactory.class
-})
+@WebService(endpointInterface = "ejb.service.ejb.i.TeamsService")
 @Component
 public class TeamsServiceBean implements TeamsService {
 
@@ -97,9 +91,11 @@ public class TeamsServiceBean implements TeamsService {
     @WebResult(name = "team")
     @Override
     public TeamDTO createTeam(
-        @WebParam(name = "team") TeamDTO dto
+        @WebParam(name = "team", targetNamespace = "http://i.ejb.service.ejb/") TeamDTO dto
     ) {
         System.out.println("!!!!!!!!!!!!!!!!!! visited createTeam");
+        if(repo == null)
+            repo = SpringToJerseyConfig.teamRepository;
         for (Long humanId : dto.getHumans()) {
             if (getHuman(humanId) == null)
                 throw new HumanNotFoundException();

@@ -2,25 +2,39 @@ package ejb.service.ejb.i;
 
 import ejb.service.DTO.TeamDTO;
 import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
 import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
-@WebService
+@WebService(name = "TeamsService", targetNamespace = "http://i.ejb.service.ejb/")
+@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 public interface TeamsService {
     @WebMethod
-    public TeamDTO getTeam(Long id);
+    @WebResult(name = "team", targetNamespace = "http://i.ejb.service.ejb/")
+    public TeamDTO getTeam(@WebParam(name = "id", targetNamespace = "http://i.ejb.service.ejb/") Long id);
 
     @WebMethod
-    public TeamDTO createTeam(TeamDTO dto);
+    @WebResult(name = "team", targetNamespace = "http://i.ejb.service.ejb/")
+    public TeamDTO createTeam(
+            @WebParam(name = "team", targetNamespace = "http://i.ejb.service.ejb/") TeamDTO dto);
 
     @WebMethod
-    public TeamDTO deleteTeam(Long id);
+    @WebResult(name = "team", targetNamespace = "http://i.ejb.service.ejb/")
+    public TeamDTO deleteTeam(@WebParam(name = "id", targetNamespace = "http://i.ejb.service.ejb/") Long id);
 
     @WebMethod
-    public TeamDTO addMember(Long teamId, Long humanId);
+    @WebResult(name = "team", targetNamespace = "http://i.ejb.service.ejb/")
+    public TeamDTO addMember(@WebParam(name = "teamId", targetNamespace = "http://i.ejb.service.ejb/") Long teamId,
+            @WebParam(name = "humanId", targetNamespace = "http://i.ejb.service.ejb/") Long humanId);
 
     @WebMethod
-    public TeamDTO removeMemberFromTeam(Long teamId, Long humanId);
+    @WebResult(name = "team", targetNamespace = "http://i.ejb.service.ejb/")
+    public TeamDTO removeMemberFromTeam(
+            @WebParam(name = "teamId", targetNamespace = "http://i.ejb.service.ejb/") Long teamId,
+            @WebParam(name = "humanId", targetNamespace = "http://i.ejb.service.ejb/") Long humanId);
 
     @WebMethod
-    public void deleteMemberByHumanId(Long humanId);
+    public void deleteMemberByHumanId(
+            @WebParam(name = "humanId", targetNamespace = "http://i.ejb.service.ejb/") Long humanId);
 }

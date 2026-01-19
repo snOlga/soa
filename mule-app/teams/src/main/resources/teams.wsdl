@@ -7,22 +7,92 @@ is XML-WS Runtime 4.0.2 git-revision#0264419.  -->
     xmlns:wsp="http://www.w3.org/ns/ws-policy"
     xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"
     xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
-    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://localhost/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://i.ejb.service.ejb/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/"
-    targetNamespace="http://localhost/" name="TeamsService">
-    <import namespace="http://i.ejb.service.ejb/" location="http://localhost:18090/wsdl?wsdl=1" />
-    <binding xmlns:ns1="http://i.ejb.service.ejb/" name="TeamsServicePortBinding"
-        type="ns1:TeamsService">
-        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
-        <operation name="deleteMemberByHumanId">
-            <soap:operation soapAction="" />
-            <input>
-                <soap:body use="literal" />
-            </input>
-            <output>
-                <soap:body use="literal" />
-            </output>
+    targetNamespace="http://i.ejb.service.ejb/" name="TeamsService">
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://i.ejb.service.ejb/"
+                schemaLocation="http://localhost:18090/wsdl?xsd=1" />
+        </xsd:schema>
+    </types>
+    <message name="removeMemberFromTeam">
+        <part name="parameters" element="tns:removeMemberFromTeam" />
+    </message>
+    <message name="removeMemberFromTeamResponse">
+        <part name="parameters" element="tns:removeMemberFromTeamResponse" />
+    </message>
+    <message name="deleteMemberByHumanId">
+        <part name="parameters" element="tns:deleteMemberByHumanId" />
+    </message>
+    <message name="deleteMemberByHumanIdResponse">
+        <part name="parameters" element="tns:deleteMemberByHumanIdResponse" />
+    </message>
+    <message name="createTeam">
+        <part name="parameters" element="tns:createTeam" />
+    </message>
+    <message name="createTeamResponse">
+        <part name="parameters" element="tns:createTeamResponse" />
+    </message>
+    <message name="getTeam">
+        <part name="parameters" element="tns:getTeam" />
+    </message>
+    <message name="getTeamResponse">
+        <part name="parameters" element="tns:getTeamResponse" />
+    </message>
+    <message name="addMember">
+        <part name="parameters" element="tns:addMember" />
+    </message>
+    <message name="addMemberResponse">
+        <part name="parameters" element="tns:addMemberResponse" />
+    </message>
+    <message name="deleteTeam">
+        <part name="parameters" element="tns:deleteTeam" />
+    </message>
+    <message name="deleteTeamResponse">
+        <part name="parameters" element="tns:deleteTeamResponse" />
+    </message>
+    <portType name="TeamsService">
+        <operation name="removeMemberFromTeam">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/removeMemberFromTeamRequest"
+                message="tns:removeMemberFromTeam" />
+            <output wsam:Action="http://i.ejb.service.ejb/TeamsService/removeMemberFromTeamResponse"
+                message="tns:removeMemberFromTeamResponse" />
         </operation>
+        <operation name="deleteMemberByHumanId">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/deleteMemberByHumanIdRequest"
+                message="tns:deleteMemberByHumanId" />
+            <output
+                wsam:Action="http://i.ejb.service.ejb/TeamsService/deleteMemberByHumanIdResponse"
+                message="tns:deleteMemberByHumanIdResponse" />
+        </operation>
+        <operation name="createTeam">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/createTeamRequest"
+                message="tns:createTeam" />
+            <output wsam:Action="http://i.ejb.service.ejb/TeamsService/createTeamResponse"
+                message="tns:createTeamResponse" />
+        </operation>
+        <operation name="getTeam">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/getTeamRequest"
+                message="tns:getTeam" />
+            <output wsam:Action="http://i.ejb.service.ejb/TeamsService/getTeamResponse"
+                message="tns:getTeamResponse" />
+        </operation>
+        <operation name="addMember">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/addMemberRequest"
+                message="tns:addMember" />
+            <output wsam:Action="http://i.ejb.service.ejb/TeamsService/addMemberResponse"
+                message="tns:addMemberResponse" />
+        </operation>
+        <operation name="deleteTeam">
+            <input wsam:Action="http://i.ejb.service.ejb/TeamsService/deleteTeamRequest"
+                message="tns:deleteTeam" />
+            <output wsam:Action="http://i.ejb.service.ejb/TeamsService/deleteTeamResponse"
+                message="tns:deleteTeamResponse" />
+        </operation>
+    </portType>
+    <binding name="TeamsServicePortBinding" type="tns:TeamsService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
         <operation name="removeMemberFromTeam">
             <soap:operation soapAction="" />
             <input>
@@ -32,7 +102,7 @@ is XML-WS Runtime 4.0.2 git-revision#0264419.  -->
                 <soap:body use="literal" />
             </output>
         </operation>
-        <operation name="deleteTeam">
+        <operation name="deleteMemberByHumanId">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />
@@ -41,7 +111,7 @@ is XML-WS Runtime 4.0.2 git-revision#0264419.  -->
                 <soap:body use="literal" />
             </output>
         </operation>
-        <operation name="addMember">
+        <operation name="createTeam">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />
@@ -59,7 +129,16 @@ is XML-WS Runtime 4.0.2 git-revision#0264419.  -->
                 <soap:body use="literal" />
             </output>
         </operation>
-        <operation name="createTeam">
+        <operation name="addMember">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+        <operation name="deleteTeam">
             <soap:operation soapAction="" />
             <input>
                 <soap:body use="literal" />

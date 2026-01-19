@@ -17,11 +17,12 @@ public class ConsulConfig {
 
     private String address = "";
     private String port = "";
-    String consulUrl = "http://172.20.0.18:8500/v1/agent/service/register";
+    String consulUrl = "http://localhost:8500/v1/agent/service/register";
 
     @PostConstruct
     public void init() throws SocketException {
-        readProperties();
+        // readProperties();
+        System.out.println("HERE: " + address + " " + port);
         Random rand = new Random();
         WebClient webClient = WebClient.builder()
                 .baseUrl(consulUrl)
@@ -32,8 +33,8 @@ public class ConsulConfig {
                 .bodyValue(
                         "{\"ID\": \"" + rand.nextInt(1000) + "\", \r\n" +
                                 "    \"Name\": \"teams\",\r\n" +
-                                "    \"Address\": \"" + address + "\",\r\n" + // nvm
-                                "    \"Port\": " + port + "\n}")
+                                "    \"Address\": \"" + "172.20.0.1" + "\",\r\n" + // nvm
+                                "    \"Port\": " + "18066" + "\n}")
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();

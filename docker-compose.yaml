@@ -50,9 +50,6 @@ services:
       - haproxy
     volumes:
       - ./utils/teams-1:/app/config
-    ports:
-      - "18090:18090"
-      - "18091:18091"
   teams-rest:
     image: teams-rest
     networks:
@@ -67,8 +64,6 @@ services:
       - haproxy
     volumes:
       - ./utils/teams-2:/app/config
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   wildfly:
     image: jboss/wildfly:latest

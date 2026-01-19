@@ -6,7 +6,7 @@
 
 	<groupId>service</groupId>
 	<artifactId>ejb</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>teams-ejb-service</name>
 	<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -96,6 +96,7 @@ var team  = payload.body.ns0#getTeamResponse.team
 var items = team.humans.*item
 ---
 {
+  id: team.id as Number,
   name: team.name,
   humans: items map ($ as Number),
   isDeleted: team.isDeleted as Boolean
@@ -134,6 +135,7 @@ var team  = payload.body.ns0#deleteTeamResponse.team
 var items = team.humans.*item
 ---
 {
+  id: team.id as Number,
   name: team.name,
   humans: items map ($ as Number),
   isDeleted: team.isDeleted as Boolean
@@ -174,6 +176,7 @@ var team  = payload.body.ns0#addMemberResponse.team
 var items = team.humans.*item
 ---
 {
+  id: team.id as Number,
   name: team.name,
   humans: items map ($ as Number),
   isDeleted: team.isDeleted as Boolean
@@ -214,6 +217,7 @@ var team  = payload.body.ns0#removeMemberFromTeamResponse.team
 var items = team.humans.*item
 ---
 {
+  id: team.id as Number,
   name: team.name,
   humans: items map ($ as Number),
   isDeleted: team.isDeleted as Boolean

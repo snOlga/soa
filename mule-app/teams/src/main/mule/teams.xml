@@ -53,11 +53,22 @@ ns ns0 http://i.ejb.service.ejb/
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ns ns0 http://i.ejb.service.ejb/
+var team  = payload.body.ns0#createTeamResponse.team
+var items = team.humans.*item
 ---
-payload.body.ns0#createTeamResponse.team]]></ee:set-payload>
+{
+  name: team.name,
+  humans: items map ($ as Number),
+  isDeleted: team.isDeleted as Boolean
+}
+]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
+
+    <!-- ================================================================= -->
+    <!-- ................................................................. -->
+    <!-- ================================================================= -->
 
     <flow name="getTeamFlow">
         <http:listener config-ref="HTTP_Listener_config" path="/teams/{id}" allowedMethods="GET" />
@@ -69,9 +80,10 @@ ns ns0 http://i.ejb.service.ejb/
 ---
 {
     ns0#getTeam: {
-        id: attributes.uriParams.id as Number
+        ns0#id: attributes.uriParams.id as Number
     }
-}]]></ee:set-payload>
+}
+]]></ee:set-payload>
             </ee:message>
         </ee:transform>
         <wsc:consume config-ref="Web_Service_Consumer_Config" operation="getTeam" />
@@ -80,11 +92,22 @@ ns ns0 http://i.ejb.service.ejb/
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ns ns0 http://i.ejb.service.ejb/
+var team  = payload.body.ns0#getTeamResponse.team
+var items = team.humans.*item
 ---
-payload.body.ns0#getTeamResponse.team]]></ee:set-payload>
+{
+  name: team.name,
+  humans: items map ($ as Number),
+  isDeleted: team.isDeleted as Boolean
+}
+]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
+
+    <!-- ================================================================= -->
+    <!-- ................................................................. -->
+    <!-- ================================================================= -->
 
     <flow name="deleteTeamFlow">
         <http:listener config-ref="HTTP_Listener_config" path="/teams/{id}" allowedMethods="DELETE" />
@@ -96,7 +119,7 @@ ns ns0 http://i.ejb.service.ejb/
 ---
 {
     ns0#deleteTeam: {
-        id: attributes.uriParams.id as Number
+        ns0#id: attributes.uriParams.id as Number
     }
 }]]></ee:set-payload>
             </ee:message>
@@ -107,10 +130,96 @@ ns ns0 http://i.ejb.service.ejb/
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ns ns0 http://i.ejb.service.ejb/
+var team  = payload.body.ns0#deleteTeamResponse.team
+var items = team.humans.*item
 ---
-payload.body.ns0#deleteTeamResponse.team]]></ee:set-payload>
+{
+  name: team.name,
+  humans: items map ($ as Number),
+  isDeleted: team.isDeleted as Boolean
+}
+]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
 
+    <!-- ================================================================= -->
+    <!-- ................................................................. -->
+    <!-- ================================================================= -->
+
+    <flow name="addMemberFlow">
+        <http:listener config-ref="HTTP_Listener_config" path="/teams/{teamId}/members/{humanId}"
+            allowedMethods="POST" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://i.ejb.service.ejb/
+---
+{
+    ns0#addMember: {
+        ns0#teamId: attributes.uriParams.teamId as Number,
+        ns0#humanId: attributes.uriParams.humanId as Number
+    }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <wsc:consume config-ref="Web_Service_Consumer_Config" operation="addMember" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://i.ejb.service.ejb/
+var team  = payload.body.ns0#addMemberResponse.team
+var items = team.humans.*item
+---
+{
+  name: team.name,
+  humans: items map ($ as Number),
+  isDeleted: team.isDeleted as Boolean
+}
+]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <!-- ================================================================= -->
+    <!-- ................................................................. -->
+    <!-- ================================================================= -->
+
+    <flow name="removeMemberFromTeamFlow">
+        <http:listener config-ref="HTTP_Listener_config" path="/teams/{teamId}/members/{humanId}"
+            allowedMethods="DELETE" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://i.ejb.service.ejb/
+---
+{
+    ns0#removeMemberFromTeam: {
+        ns0#teamId: attributes.uriParams.teamId as Number,
+        ns0#humanId: attributes.uriParams.humanId as Number
+    }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <wsc:consume config-ref="Web_Service_Consumer_Config" operation="removeMemberFromTeam" />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://i.ejb.service.ejb/
+var team  = payload.body.ns0#removeMemberFromTeamResponse.team
+var items = team.humans.*item
+---
+{
+  name: team.name,
+  humans: items map ($ as Number),
+  isDeleted: team.isDeleted as Boolean
+}
+]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
 </mule>

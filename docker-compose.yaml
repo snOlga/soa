@@ -36,8 +36,8 @@ services:
       - haproxy
     volumes:
       - ./utils/humans-2:/app/config
-  teams-1:
-    image: teams-service
+  teams-soap:
+    image: teams-soap
     networks:
       app_net:
         ipv4_address: 172.20.0.12
@@ -50,8 +50,8 @@ services:
       - haproxy
     volumes:
       - ./utils/teams-1:/app/config
-  teams-2:
-    image: teams-service
+  teams-rest:
+    image: teams-rest
     networks:
       app_net:
         ipv4_address: 172.20.0.13
